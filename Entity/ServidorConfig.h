@@ -22,20 +22,30 @@ class ServidorConfig {
 private:
     long id;
     Servidor servidor;
+    long intervaloLeituraConfiguracoes;
     long intervaloCpu;
     long intervaloMemoria;
     long intervaloSwap;
     long intervaloDB;
     string hostMonitoramento;
     string hostMonitoramento2;
+    long porta;
+    long porta2;
 
 public:
     ServidorConfig();
 
     virtual ~ServidorConfig();
 
+    void lerConfiguracoesLocais();
+
+    void salvarConfiguracoesLocais();
 
     bool fromJson(const string &json);
+
+    static void sincronizarConfigLocalComApi(ServidorConfig *servidorConfig);
+
+    void threadSincronizarConfigLocalComApi(ServidorConfig *servidorConfig);
 
     string toJson();
 
@@ -105,6 +115,30 @@ public:
 
     void setHostMonitoramento2(const string &hostMonitoramento2) {
         ServidorConfig::hostMonitoramento2 = hostMonitoramento2;
+    }
+
+    long getIntervaloLeituraConfiguracoes() const {
+        return intervaloLeituraConfiguracoes;
+    }
+
+    void setIntervaloLeituraConfiguracoes(long intervaloLeituraConfiguracoes) {
+        ServidorConfig::intervaloLeituraConfiguracoes = intervaloLeituraConfiguracoes;
+    }
+
+    long getPorta() const {
+        return porta;
+    }
+
+    void setPorta(long porta) {
+        ServidorConfig::porta = porta;
+    }
+
+    long getPorta2() const {
+        return porta2;
+    }
+
+    void setPorta2(long porta2) {
+        ServidorConfig::porta2 = porta2;
     }
 };
 

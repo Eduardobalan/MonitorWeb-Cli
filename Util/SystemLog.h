@@ -1,0 +1,41 @@
+//
+// Created by eduardo on 13/10/17.
+//
+
+#ifndef WEBMONITOR_CLIENTE_SYSTEMLOG_H
+#define WEBMONITOR_CLIENTE_SYSTEMLOG_H
+
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+class SystemLog {
+private:
+    static bool ativarLog;
+    static bool ativarLogArquivo;
+public:
+
+
+    static void execLog(char tipo,const string &log);
+    // ------ Getter end Setter
+
+    static bool isAtivarLogArquivo() {
+        return ativarLogArquivo;
+    }
+
+    static void setAtivarLogArquivo(bool ativarLogArquivo) {
+        SystemLog::ativarLogArquivo = ativarLogArquivo;
+    }
+
+    static bool isAtivarLog() {
+        return ativarLog;
+    }
+
+    static bool setAtivarLog(bool ativarLog) {
+        SystemLog::ativarLog = ativarLog;
+    }
+};
+
+
+#endif //WEBMONITOR_CLIENTE_SYSTEMLOG_H
