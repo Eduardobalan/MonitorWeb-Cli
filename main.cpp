@@ -6,6 +6,10 @@
 #include "Util/SystemLog.h"
 #include "Entity/InformacoesCpu.h"
 #include "Entity/MonitoramentoCpu.h"
+#include "Entity/InformacoesMemoria.h"
+#include "Entity/MonitoramentoMemoria.h"
+#include "Entity/InformacoesSwap.h"
+#include "Entity/MonitoramentoSwap.h"
 
 using namespace std;
 
@@ -33,6 +37,12 @@ int main(int argc, char* argv[]) {
     InformacoesCpu informacoesCpu;
     informacoesCpu.monitorarInformacoesCpu(&srvConfig);
 
+    InformacoesMemoria informacoesMemoria;
+    informacoesMemoria.monitorarInformacoesMemoria(&srvConfig);
+
+    InformacoesSwap informacoesSwap;
+    informacoesSwap.monitorarInformacoesSwap(&srvConfig);
+
     //############################
     //# Monitoramento do sistema #
     //############################
@@ -40,6 +50,11 @@ int main(int argc, char* argv[]) {
     MonitoramentoCpu monitoramentoCpu;
     monitoramentoCpu.threadMonitorarMonitoramentoCpu(&srvConfig, &informacoesCpu, &monitoramentoCpu);
 
+    MonitoramentoMemoria monitoramentoMemoria;
+    monitoramentoMemoria.threadMonitorarMonitoramentoMemoria(&srvConfig, &informacoesMemoria, &monitoramentoMemoria);
+
+    MonitoramentoSwap monitoramentoSwap;
+    monitoramentoSwap.threadMonitorarMonitoramentoSwap(&srvConfig, &informacoesSwap, &monitoramentoSwap);
 
     sleep(1000000000);
 }

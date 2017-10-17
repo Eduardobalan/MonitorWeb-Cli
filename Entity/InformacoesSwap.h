@@ -1,26 +1,28 @@
 //
-// Created by eduardo on 16/10/17.
+// Created by eduardo on 17/10/17.
 //
 
-#ifndef WEBMONITOR_CLIENTE_INFORMACOESMEMORIA_H
-#define WEBMONITOR_CLIENTE_INFORMACOESMEMORIA_H
+#ifndef WEBMONITOR_CLIENTE_INFORMACOESSWAP_H
+#define WEBMONITOR_CLIENTE_INFORMACOESSWAP_H
 
 
+#include "Servidor.h"
 #include "ServidorConfig.h"
 
-class InformacoesMemoria {
+class InformacoesSwap {
 private:
     long Id;
     long total;
     Servidor servidor;
 public:
-    InformacoesMemoria();
 
-    virtual ~InformacoesMemoria();
+    InformacoesSwap();
 
-    void lerInformacoesMemoria();
+    virtual ~InformacoesSwap();
 
-    void monitorarInformacoesMemoria(ServidorConfig *srvConfig);
+    void lerInformacoesSwap();
+
+    void monitorarInformacoesSwap(ServidorConfig *srvConfig);
 
     bool fromJson(const string &json);
 
@@ -33,7 +35,7 @@ public:
     }
 
     void setId(long Id) {
-        InformacoesMemoria::Id = Id;
+        InformacoesSwap::Id = Id;
     }
 
     long getTotal() const {
@@ -41,7 +43,7 @@ public:
     }
 
     void setTotal(long total) {
-        InformacoesMemoria::total = total;
+        InformacoesSwap::total = total;
     }
 
     const Servidor &getServidor() const {
@@ -49,9 +51,9 @@ public:
     }
 
     void setServidor(const Servidor &servidor) {
-        InformacoesMemoria::servidor = servidor;
+        InformacoesSwap::servidor = servidor;
     }
 };
 
 
-#endif //WEBMONITOR_CLIENTE_INFORMACOESMEMORIA_H
+#endif //WEBMONITOR_CLIENTE_INFORMACOESSWAP_H
