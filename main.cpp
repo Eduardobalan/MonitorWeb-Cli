@@ -8,6 +8,8 @@
 #include "Entity/MonitoramentoCpu.h"
 #include "Entity/InformacoesMemoria.h"
 #include "Entity/MonitoramentoMemoria.h"
+#include "Entity/InformacoesSwap.h"
+#include "Entity/MonitoramentoSwap.h"
 
 using namespace std;
 
@@ -38,6 +40,9 @@ int main(int argc, char* argv[]) {
     InformacoesMemoria informacoesMemoria;
     informacoesMemoria.monitorarInformacoesMemoria(&srvConfig);
 
+    InformacoesSwap informacoesSwap;
+    informacoesSwap.monitorarInformacoesSwap(&srvConfig);
+
     //############################
     //# Monitoramento do sistema #
     //############################
@@ -48,6 +53,8 @@ int main(int argc, char* argv[]) {
     MonitoramentoMemoria monitoramentoMemoria;
     monitoramentoMemoria.threadMonitorarMonitoramentoMemoria(&srvConfig, &informacoesMemoria, &monitoramentoMemoria);
 
+    MonitoramentoSwap monitoramentoSwap;
+    monitoramentoSwap.threadMonitorarMonitoramentoSwap(&srvConfig, &informacoesSwap, &monitoramentoSwap);
 
     sleep(1000000000);
 }

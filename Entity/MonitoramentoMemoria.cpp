@@ -68,13 +68,13 @@ void MonitoramentoMemoria::monitorarMonitoramentoMemoria(ServidorConfig *srvConf
             SystemLog::execLog('e',"json: "+monitoramentoMemoria->toJson());
 
         }
-        sleep(srvConfig->getIntervaloCpu());
+        sleep(srvConfig->getIntervaloMemoria());
     }
     while(true);
 }
 
 void MonitoramentoMemoria::threadMonitorarMonitoramentoMemoria(ServidorConfig *srvConfig, InformacoesMemoria *informacoesMemoria, MonitoramentoMemoria *monitoramentoMemoria){
-    SystemLog::execLog('l',"MonitoramentoMemoria: Iniciando Thread Sincronizar Config local com API");
+    SystemLog::execLog('l',"MonitoramentoMemoria: Iniciando Thread");
     std::thread threadx(monitorarMonitoramentoMemoria, srvConfig, informacoesMemoria, monitoramentoMemoria);
     threadx.detach();
 };
