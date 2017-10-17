@@ -69,7 +69,7 @@ void InformacoesCpu::monitorarInformacoesCpu(ServidorConfig *srvConfig){
 }
 
 std::string InformacoesCpu::toJson(){
-    SystemLog::execLog('l',"InformacoesCpu: Tranformando Objeto em Json;");
+    SystemLog::execLog('l',"InformacoesCpu: Tranformando Objeto em Json");
     ptree pt;
     pt.put("servidor.id", servidor.getId());
     pt.put("nome", getNome());

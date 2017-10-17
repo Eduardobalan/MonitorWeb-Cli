@@ -6,6 +6,8 @@
 #include "Util/SystemLog.h"
 #include "Entity/InformacoesCpu.h"
 #include "Entity/MonitoramentoCpu.h"
+#include "Entity/InformacoesMemoria.h"
+#include "Entity/MonitoramentoMemoria.h"
 
 using namespace std;
 
@@ -33,12 +35,18 @@ int main(int argc, char* argv[]) {
     InformacoesCpu informacoesCpu;
     informacoesCpu.monitorarInformacoesCpu(&srvConfig);
 
+    InformacoesMemoria informacoesMemoria;
+    informacoesMemoria.monitorarInformacoesMemoria(&srvConfig);
+
     //############################
     //# Monitoramento do sistema #
     //############################
 
     MonitoramentoCpu monitoramentoCpu;
     monitoramentoCpu.threadMonitorarMonitoramentoCpu(&srvConfig, &informacoesCpu, &monitoramentoCpu);
+
+    MonitoramentoMemoria monitoramentoMemoria;
+    monitoramentoMemoria.threadMonitorarMonitoramentoMemoria(&srvConfig, &informacoesMemoria, &monitoramentoMemoria);
 
 
     sleep(1000000000);
