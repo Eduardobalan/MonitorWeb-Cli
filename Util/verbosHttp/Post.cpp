@@ -38,7 +38,7 @@ Result* Post::exec(const string &json) {
 
         boost::asio::streambuf request;
         std::ostream request_stream(&request);
-        request_stream << "GET " << path << " HTTP/1.0\r\n";
+        request_stream << "POST " << path << " HTTP/1.0\r\n";
         request_stream << "Host: " << host << "\r\n";
         request_stream << "Accept: */*\r\n";
         request_stream << "Content-Length: " <<  json.length() << "\r\n";
@@ -67,7 +67,7 @@ Result* Post::exec(const string &json) {
         if (!response_stream || http_version.substr(0, 5) != "HTTP/")
         {
             std::cout << "Invalid response\n";
-            return new Result(0, "", "Invalid response!");
+            return new Result(400, "", "Invalid response!");
         }
         if (status_code != 200)
         {
@@ -80,9 +80,11 @@ Result* Post::exec(const string &json) {
 
         // Process the response headers.
         std::string header;
-        while (std::getline(response_stream, header) && header != "\r")
-            std::cout << header << "\n";
-        std::cout << "\n";
+        while (std::getline(response_stream, header) && header != "\r"){
+
+        }
+            //std::cout << header << "\n";
+        //std::cout << "\n";
 
         // Write whatever content we already have to output.
 //        if (response.size() > 0)
@@ -91,14 +93,16 @@ Result* Post::exec(const string &json) {
         // Read until EOF, writing data to output as we go.
         boost::system::error_code error;
         while (boost::asio::read(socket, response, boost::asio::transfer_at_least(1), error)){
-            std::ostringstream ss;
-            ss << &response;
-            std::string s = ss.str();
-
-            return new Result(status_code, s, "");
         }
+        std::ostringstream ss;
+        std::string s;
+        ss << &response;
+        s = ss.str();
+
         if (error != boost::asio::error::eof){
             throw boost::system::system_error(error);
+        }else{
+            return new Result(status_code, s,"");
         }
     }
     catch (std::exception& e)

@@ -76,9 +76,11 @@ Result* Get::exec() {
 
         // Process the response headers.
         std::string header;
-        while (std::getline(response_stream, header) && header != "\r")
-            std::cout << header << "\n";
-        std::cout << "\n";
+        while (std::getline(response_stream, header) && header != "\r"){
+
+        }
+//            std::cout << header << "\n";
+//        std::cout << "\n";
 
         // Write whatever content we already have to output.
 //        if (response.size() > 0) {
@@ -91,16 +93,16 @@ Result* Get::exec() {
 
         // Read until EOF, writing data to output as we go.
         boost::system::error_code error;
+        std::ostringstream ss;
         while (boost::asio::read(socket, response,  boost::asio::transfer_at_least(1), error)){
-            std::ostringstream ss;
-            ss << &response;
-            std::string s = ss.str();
-
-            return new Result(status_code, s, "");
         }
+        ss << &response;
+        std::string s = ss.str();
+
         if (error != boost::asio::error::eof){
             throw boost::system::system_error(error);
-            return new Result(status_code, "", "connect: Connection refused");
+        }else{
+            return new Result(status_code, s, "");
         }
 
     }

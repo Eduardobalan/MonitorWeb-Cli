@@ -2,69 +2,44 @@
 // Created by eduardo on 29/09/17.
 //
 #include <stdlib.h>
-#include <iostream>
-#include "Entity/Servidor.h"
+#include <unistd.h>
+#include "Util/SystemLog.h"
 #include "Entity/InformacoesCpu.h"
-#include "Entity/ServidorConfig.h"
-#include "Util/verbosHttp/Get.h"
-#include "Util/verbosHttp/Post.h"
-
-//#include "Entity/InformacoesCpu.h"
+#include "Entity/MonitoramentoCpu.h"
 
 using namespace std;
 
 int main(int argc, char* argv[]) {
 
-    bool log = true;
+    //############################
+    //### Configurações log ######
+    //############################
 
-    Servidor servidor;
-    servidor.setId(1);
-
-
-    //#########################################################################
-    //########## Inicializa Informações servidor configurações ################
-    //#########################################################################
-
-    ServidorConfig servidorConfig;
-
-    Get getServidorConfig("/servidor/"+ to_string(servidor.getId()) +"/servidorconfiguracoes/1","172.23.64.255",8081);
-    Result *resultServidorConfig;
-    do{
-        resultServidorConfig = getServidorConfig.exec();
-        if(resultServidorConfig->getStatus() == 200){
-            servidorConfig.fromJson(resultServidorConfig->getResult());
-        }else{
-            cout << "Erro ao conectar " << endl;
-        }
-    }
-    while(resultServidorConfig->getStatus() != 200);
-
-    servidorConfig.print();
+    SystemLog::lerLogConf();
 
 
-    //#########################################################################
-    //#################### Inicializa Informações Cpu #########################
-    //#########################################################################
+    //############################
+    //# Configurações do sistema #
+    //############################
 
-    //Inicializa Informações Cpu
+    ServidorConfig srvConfig;
+    srvConfig.lerConfiguracoesLocais();
+    srvConfig.threadSincronizarConfigLocalComApi(&srvConfig);
+
+    //############################
+    //# Informacoes  do  sistema #
+    //############################
+
     InformacoesCpu informacoesCpu;
-    informacoesCpu.lerInformacoesCpu();
+    informacoesCpu.monitorarInformacoesCpu(&srvConfig);
 
-    Post postInformacoesCpu("/servidor/"+ to_string(servidor.getId()) +"/informacoescpu","172.23.64.255",8081);
-    Result *resultInformacoesCpu;
-    do{
-        resultInformacoesCpu = postInformacoesCpu.exec(informacoesCpu.toJson());
-        if(resultInformacoesCpu->getStatus() == 200){
-            informacoesCpu.fromJson(resultInformacoesCpu->getResult());
-        }else{
-            cout << "Erro ao conectar " << endl;
-        }
-    }
-    while(resultInformacoesCpu->getStatus() != 200);
+    //############################
+    //# Monitoramento do sistema #
+    //############################
 
-    informacoesCpu.print();
+    MonitoramentoCpu monitoramentoCpu;
+    monitoramentoCpu.threadMonitorarMonitoramentoCpu(&srvConfig, &informacoesCpu, &monitoramentoCpu);
 
 
-    return 0;
-
+    sleep(1000000000);
 }

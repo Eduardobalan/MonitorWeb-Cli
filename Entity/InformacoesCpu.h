@@ -6,6 +6,9 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include "Servidor.h"
+#include "../Util/verbosHttp/Post.h"
+#include "ServidorConfig.h"
+#include <thread>
 
 #ifndef WEBMONITOR_CLIENTE_INFORMACOESCPU_H
 #define WEBMONITOR_CLIENTE_INFORMACOESCPU_H
@@ -13,14 +16,14 @@
 using boost::property_tree::ptree;
 using boost::property_tree::read_json;
 using boost::property_tree::write_json;
-using std::string;
-using std::cout;
+
+using namespace std;
 
 class InformacoesCpu {
 
 private:
     long Id;
-    Servidor *servidor;
+    Servidor servidor;
     string nome;
     long cacheSize;
     long cpuCores;
@@ -34,6 +37,8 @@ public:
     void print();
 
     void lerInformacoesCpu();
+
+    void monitorarInformacoesCpu(ServidorConfig *srvConfig);
 
     bool fromJson(const string &json);
 
@@ -49,11 +54,11 @@ public:
         InformacoesCpu::Id = Id;
     }
 
-    Servidor *getServidor() const {
+    const Servidor &getServidor() const {
         return servidor;
     }
 
-    void setServidor(Servidor *servidor) {
+    void setServidor(const Servidor &servidor) {
         InformacoesCpu::servidor = servidor;
     }
 
@@ -88,6 +93,7 @@ public:
     void setSiblings(long siblings) {
         InformacoesCpu::siblings = siblings;
     }
+
 
 };
 
