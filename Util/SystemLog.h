@@ -12,13 +12,43 @@ using namespace std;
 
 class SystemLog {
 private:
+    static bool mostrarLogLog;
+    static bool mostrarLogWorming;
+    static bool mostrarLogErro;
     static bool ativarLog;
     static bool ativarLogArquivo;
 public:
 
 
+    static void lerLogConf();
+
     static void execLog(char tipo,const string &log);
+
     // ------ Getter end Setter
+
+    static bool isMostrarLogLog() {
+        return mostrarLogLog;
+    }
+
+    static void setMostrarLogLog(bool mostrarLogLog) {
+        SystemLog::mostrarLogLog = mostrarLogLog;
+    }
+
+    static bool isMostrarLogWorming() {
+        return mostrarLogWorming;
+    }
+
+    static void setMostrarLogWorming(bool mostrarLogWorming) {
+        SystemLog::mostrarLogWorming = mostrarLogWorming;
+    }
+
+    static bool isMostrarLogErro() {
+        return mostrarLogErro;
+    }
+
+    static void setMostrarLogErro(bool mostrarLogErro) {
+        SystemLog::mostrarLogErro = mostrarLogErro;
+    }
 
     static bool isAtivarLogArquivo() {
         return ativarLogArquivo;

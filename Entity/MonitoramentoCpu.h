@@ -10,6 +10,8 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include "Servidor.h"
+#include "ServidorConfig.h"
+#include "InformacoesCpu.h"
 
 
 using boost::property_tree::ptree;
@@ -21,6 +23,7 @@ using std::cout;
 class MonitoramentoCpu {
 
 private:
+    InformacoesCpu *informacoesCpu;
     long numeroNucleos;
     long cpuMhz;
 
@@ -33,9 +36,23 @@ public:
 
     string toJson();
 
+    void lerMonitorarCpu();
+
+    static void monitorarMonitoramentoCpu(ServidorConfig *srvConfig, InformacoesCpu *informacoesCpu, MonitoramentoCpu *monitoramentoCpu);
+
+    void threadMonitorarMonitoramentoCpu(ServidorConfig *srvConfig, InformacoesCpu *informacoesCpu, MonitoramentoCpu *monitoramentoCpu);
+
     void print();
 
     //======= getter end setter ======
+
+    InformacoesCpu *getInformacoesCpu() const {
+        return informacoesCpu;
+    }
+
+    void setInformacoesCpu(InformacoesCpu *informacoesCpu) {
+        MonitoramentoCpu::informacoesCpu = informacoesCpu;
+    }
 
     long getNumeroNucleos() const {
         return numeroNucleos;

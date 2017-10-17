@@ -22,7 +22,7 @@ void ServidorConfig::lerConfiguracoesLocais(){
         chdir("/home/eduardo/Workspace/TCC-monitorWeb-Cliente");
         ConfigFile configFile("ConfigFile.conf", ":");
         configFile.load();
-        SystemLog::execLog('l',"Lendo arquivo de configurações locais.");
+        SystemLog::execLog('l',"ServidorConfig: Lendo arquivo de configurações locais.");
 
         setId(configFile.getInt("id"));
         servidor.setId(configFile.getInt("servidorid"));
@@ -62,7 +62,7 @@ void ServidorConfig::salvarConfiguracoesLocais(){
         configFile.save("porta2", getPorta2());
 
         configFile.commit();
-        SystemLog::execLog('l',"Arquivo de configurações locais atualizados com API.");
+        SystemLog::execLog('l',"ServidorConfig: Arquivo de configurações locais atualizados com API.");
 
     } catch (FileNotFoundException &ex) {
         std::cerr << ex.what() << std::endl;
@@ -73,32 +73,32 @@ void ServidorConfig::salvarConfiguracoesLocais(){
 
 void ServidorConfig::sincronizarConfigLocalComApi(ServidorConfig *srvConfig){
     
-    Result *resultServidorConfig;
+    Result *result;
     do{
         string path = "/servidor/"+ to_string(srvConfig->getServidor().getId()) +"/servidorconfiguracoes/"+to_string(srvConfig->getId());
-        Get getServidorConfig(path, srvConfig->getHostMonitoramento(), srvConfig->getPorta());
-        resultServidorConfig = getServidorConfig.exec();
-        if(resultServidorConfig->getStatus() == 200){
-            srvConfig->fromJson(resultServidorConfig->getResult());
+        Get get(path, srvConfig->getHostMonitoramento(), srvConfig->getPorta());
+        result = get.exec();
+        if(result->getStatus() == 200){
+            srvConfig->fromJson(result->getResult());
             srvConfig->salvarConfiguracoesLocais();
-            SystemLog::execLog('l',"Lendo api configurações do servidor:."+srvConfig->getHostMonitoramento()+":"+to_string(srvConfig->getPorta())+ path);
+            SystemLog::execLog('l',"ServidorConfig: Lendo api configurações do servidor:."+srvConfig->getHostMonitoramento()+":"+to_string(srvConfig->getPorta())+ path);
         }else{
-            SystemLog::execLog('e',"Lendo api configurações do servidor: Status:"+resultServidorConfig->getResult() +" erro:"+ resultServidorConfig->getError());
+            SystemLog::execLog('e',"ServidorConfig: Lendo api configurações do servidor: Status:"+result->getResult() +" erro:"+ result->getError());
         }
-        usleep(srvConfig->getIntervaloLeituraConfiguracoes()*100000);
+        sleep(srvConfig->getIntervaloLeituraConfiguracoes());
     }
     while(true);
 
 };
 
 void ServidorConfig::threadSincronizarConfigLocalComApi(ServidorConfig *srvConfig){
-    SystemLog::execLog('l',"Iniciando Thread Sincronizar Config local com API");
+    SystemLog::execLog('l',"ServidorConfig: Iniciando Thread Sincronizar Config local com API");
     std::thread threadx(sincronizarConfigLocalComApi, srvConfig);
     threadx.detach();
 };
 
 std::string ServidorConfig::toJson(){
-    SystemLog::execLog('l',"Tranformando Objeto ServidorConfig em Json;");
+    SystemLog::execLog('l',"ServidorConfig: Tranformando Objeto em Json;");
     ptree pt;
     pt.put ("id", getId());
     pt.put ("servidor.id", getServidor().getId());
@@ -119,7 +119,7 @@ std::string ServidorConfig::toJson(){
 }
 
 bool ServidorConfig::fromJson(const std::string &json){
-    SystemLog::execLog('l',"Trasformando o json em objeto");
+    SystemLog::execLog('l',"ServidorConfig: Trasformando o json em objeto");
     ptree pt2;
     std::istringstream is (json);
     read_json (is, pt2);

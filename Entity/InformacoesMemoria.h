@@ -1,0 +1,14 @@
+//
+// Created by eduardo on 16/10/17.
+//
+
+#ifndef WEBMONITOR_CLIENTE_INFORMACOESMEMORIA_H
+#define WEBMONITOR_CLIENTE_INFORMACOESMEMORIA_H
+
+
+class InformacoesMemoria {
+
+};
+
+
+#endif //WEBMONITOR_CLIENTE_INFORMACOESMEMORIA_H
