@@ -35,6 +35,8 @@ void ServidorConfig::lerConfiguracoesLocais(){
         setHostMonitoramento2(configFile.getString("hostMonitoramento2"));
         setPorta(configFile.getInt("porta"));
         setPorta2(configFile.getInt("porta2"));
+        setPostgresPathMain(configFile.getString("postgresPathMain"));
+        setPostgresVersao(configFile.getString("postgresVersao"));
 
     } catch (FileNotFoundException &ex) {
         std::cerr << ex.what() << std::endl;
@@ -60,6 +62,9 @@ void ServidorConfig::salvarConfiguracoesLocais(){
         configFile.save("hostMonitoramento2", getHostMonitoramento2());
         configFile.save("porta", getPorta());
         configFile.save("porta2", getPorta2());
+        configFile.save("postgresPathMain", getPostgresPathMain());
+        configFile.save("postgresVersao", getPostgresVersao());
+
 
         configFile.commit();
         SystemLog::execLog('l',"ServidorConfig: Arquivo de configurações locais atualizados com API.");
@@ -111,6 +116,8 @@ std::string ServidorConfig::toJson(){
     pt.put ("hostMonitoramento2", getHostMonitoramento2());
     pt.put ("porta", getPorta());
     pt.put ("porta2", getPorta2());
+    pt.put ("postgresPathMain", getPostgresPathMain());
+    pt.put ("postgresVersao", getPostgresVersao());
 
     std::ostringstream buf;
     write_json (buf, pt, false);
@@ -135,6 +142,8 @@ bool ServidorConfig::fromJson(const std::string &json){
     setHostMonitoramento2(pt2.get<string> ("hostMonitoramento2"));
     setPorta(pt2.get<long> ("porta"));
     setPorta2(pt2.get<long> ("porta2"));
+    setPostgresPathMain(pt2.get<string> ("postgresPathMain"));
+    setPostgresVersao(pt2.get<string> ("postgresVersao"));
 
 
 

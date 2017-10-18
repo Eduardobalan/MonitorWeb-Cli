@@ -26,6 +26,7 @@
 #include <iostream>
 #include <map>
 #include "Exceptions.h"
+#include "../SystemLog.h"
 
 using namespace std;
 
@@ -145,8 +146,10 @@ public:
         const char *value = getPropertyValue(property);
 
         if (value == nullptr) {
-            PropertyNotFoundException ex(property);
-            throw ex;
+            value = "";
+            SystemLog::execLog('w',"ConfigFile: property '"+property+"' não encontrada no arquivo ou linha comentada.");
+//            PropertyNotFoundException ex(property);
+//            throw ex;
         }
 
         return value;
