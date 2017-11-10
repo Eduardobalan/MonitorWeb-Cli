@@ -2,27 +2,27 @@
 // Created by eduardo on 17/10/17.
 //
 
-#include "InformacoesDb.h"
+#include "InformacoesPostgres.h"
 #include "../Util/ConfigFile/ConfigFile.h"
 #include "../Util/verbosHttp/Post.h"
 
 
-InformacoesDb::InformacoesDb() {}
+InformacoesPostgres::InformacoesPostgres() {}
 
-InformacoesDb::~InformacoesDb() {
+InformacoesPostgres::~InformacoesPostgres() {
 
 };
 
-void InformacoesDb::lerInformacoesDb(ServidorConfig *srvConfig){
+void InformacoesPostgres::lerInformacoesPostgres(ServidorConfig *srvConfig){
     try {
-        char *path = new char[srvConfig->getPostgresPathMain().length() + 1];
-        std::strcpy(path, srvConfig->getPostgresPathMain().c_str());
+//       char *path = new char[srvConfig->getPostgresPathMain().length() + 1];
+//       std::strcpy(path, srvConfig->getPostgresPathMain().c_str());
 
-        chdir(path);
+//        chdir(path);
         ConfigFile configFile("postgresql.conf", "=");
 
         configFile.load();
-        SystemLog::execLog('l',"InformacoesDb: lendo InformacoesDb");
+        SystemLog::execLog('l',"InformacoesPostgres: lendo InformacoesPostgres");
 
         setListenAddresses(configFile.getString("listen_addresses"));
 
@@ -45,31 +45,31 @@ void InformacoesDb::lerInformacoesDb(ServidorConfig *srvConfig){
     }
 };
 
-void InformacoesDb::monitorarInformacoesDb(ServidorConfig *srvConfig){
+void InformacoesPostgres::monitorarInformacoesPostgres(ServidorConfig *srvConfig){
 
     servidor.setId(srvConfig->getServidor().getId());
 
-    string path = "/servidor/"+ to_string(srvConfig->getServidor().getId()) +"/informacoesdb/";
+    string path = "/servidor/"+ to_string(srvConfig->getServidor().getId()) +"/informacoespostgres/";
 
     Post post(path, srvConfig->getHostMonitoramento(), srvConfig->getPorta());
     Result *result;
     do{
-        lerInformacoesDb(srvConfig);
+        lerInformacoesPostgres(srvConfig);
 
         result = post.exec(toJson());
-        SystemLog::execLog('l',"InformacoesDb : "+srvConfig->getHostMonitoramento()+":"+to_string(srvConfig->getPorta())+ path);
+        SystemLog::execLog('l',"InformacoesPostgres : "+srvConfig->getHostMonitoramento()+":"+to_string(srvConfig->getPorta())+ path);
         if(result->getStatus() == 200){
             fromJson(result->getResult());
-            SystemLog::execLog('l',"InformacoesDb Resultado: "+result->getResult());
+            SystemLog::execLog('l',"InformacoesPostgres Resultado: "+result->getResult());
         }else{
-            SystemLog::execLog('e',"InformacoesDb: Status:"+result->getResult() +" erro:"+ result->getError());
-            SystemLog::execLog('e',"InformacoesDb json enviado: "+toJson());
+            SystemLog::execLog('e',"InformacoesPostgres: Status:"+result->getResult() +" erro:"+ result->getError());
+            SystemLog::execLog('e',"InformacoesPostgres json enviado: "+toJson());
         }
     }
     while(result->getStatus() != 200);
 };
 
-string InformacoesDb::toJson(){
+string InformacoesPostgres::toJson(){
     SystemLog::execLog('l',"InformacoesDb: Tranformando Objeto em Json");
     ptree pt;
     pt.put("servidor.id", servidor.getId());
@@ -92,7 +92,7 @@ string InformacoesDb::toJson(){
     return  json;
 };
 
-bool InformacoesDb::fromJson(const string &json){
+bool InformacoesPostgres::fromJson(const string &json){
     SystemLog::execLog('l',"InformacoesDb: Trasformando o json em objeto");
     ptree pt2;
     std::istringstream is (json);

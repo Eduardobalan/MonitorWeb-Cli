@@ -23,6 +23,7 @@ private:
     long id;
     Servidor servidor;
     long intervaloLeituraConfiguracoes;
+    long intervaloLeituraConfiguracoesDb;
     long intervaloCpu;
     long intervaloMemoria;
     long intervaloSwap;
@@ -31,8 +32,6 @@ private:
     string hostMonitoramento2;
     long porta;
     long porta2;
-    string postgresPathMain;
-    string postgresVersao;
 
 public:
     ServidorConfig();
@@ -127,6 +126,14 @@ public:
         ServidorConfig::intervaloLeituraConfiguracoes = intervaloLeituraConfiguracoes;
     }
 
+    long getIntervaloLeituraConfiguracoesDb() const {
+        return intervaloLeituraConfiguracoesDb;
+    }
+
+    void setIntervaloLeituraConfiguracoesDb(long intervaloLeituraConfiguracoesDb) {
+        ServidorConfig::intervaloLeituraConfiguracoesDb = intervaloLeituraConfiguracoesDb;
+    }
+
     long getPorta() const {
         return porta;
     }
@@ -143,21 +150,6 @@ public:
         ServidorConfig::porta2 = porta2;
     }
 
-    const string &getPostgresPathMain() const {
-        return postgresPathMain;
-    }
-
-    void setPostgresPathMain(const string &postgresPathMain) {
-        ServidorConfig::postgresPathMain = postgresPathMain;
-    }
-
-    const string &getPostgresVersao() const {
-        return postgresVersao;
-    }
-
-    void setPostgresVersao(const string &postgresVersao) {
-        ServidorConfig::postgresVersao = postgresVersao;
-    }
 };
 
 

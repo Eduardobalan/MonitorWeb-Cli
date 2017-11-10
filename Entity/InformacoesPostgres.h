@@ -9,7 +9,7 @@
 #include "Servidor.h"
 #include "ServidorConfig.h"
 
-class InformacoesDb {
+class InformacoesPostgres {
 private:
     long Id;
     Servidor servidor;
@@ -28,13 +28,13 @@ private:
 
 public:
 
-    InformacoesDb();
+    InformacoesPostgres();
 
-    virtual ~InformacoesDb();
+    virtual ~InformacoesPostgres();
 
-    void lerInformacoesDb(ServidorConfig *srvConfig);
+    void lerInformacoesPostgres(ServidorConfig *srvConfig);
 
-    void monitorarInformacoesDb(ServidorConfig *srvConfig);
+    void monitorarInformacoesPostgres(ServidorConfig *srvConfig);
 
     bool fromJson(const string &json);
 
@@ -46,7 +46,7 @@ public:
     }
 
     void setId(long Id) {
-        InformacoesDb::Id = Id;
+        InformacoesPostgres::Id = Id;
     }
 
     const Servidor &getServidor() const {
@@ -54,7 +54,7 @@ public:
     }
 
     void setServidor(const Servidor &servidor) {
-        InformacoesDb::servidor = servidor;
+        InformacoesPostgres::servidor = servidor;
     }
 
     const string &getListenAddresses() const {
@@ -62,7 +62,7 @@ public:
     }
 
     void setListenAddresses(const string &listenAddresses) {
-        InformacoesDb::listenAddresses = listenAddresses;
+        InformacoesPostgres::listenAddresses = listenAddresses;
     }
 
     const string &getPort() const {
@@ -70,7 +70,7 @@ public:
     }
 
     void setPort(const string &port) {
-        InformacoesDb::port = port;
+        InformacoesPostgres::port = port;
     }
 
     const string &getMaxConnections() const {
@@ -78,7 +78,7 @@ public:
     }
 
     void setMaxConnections(const string &maxConnections) {
-        InformacoesDb::maxConnections = maxConnections;
+        InformacoesPostgres::maxConnections = maxConnections;
     }
 
     const string &getSsl() const {
@@ -86,7 +86,7 @@ public:
     }
 
     void setSsl(const string &ssl) {
-        InformacoesDb::ssl = ssl;
+        InformacoesPostgres::ssl = ssl;
     }
 
     const string &getSharedBuffers() const {
@@ -94,7 +94,7 @@ public:
     }
 
     void setSharedBuffers(const string &sharedBuffers) {
-        InformacoesDb::sharedBuffers = sharedBuffers;
+        InformacoesPostgres::sharedBuffers = sharedBuffers;
     }
 
     const string &getTempBuffers() const {
@@ -102,7 +102,7 @@ public:
     }
 
     void setTempBuffers(const string &tempBuffers) {
-        InformacoesDb::tempBuffers = tempBuffers;
+        InformacoesPostgres::tempBuffers = tempBuffers;
     }
 
     const string &getWorkMem() const {
@@ -110,7 +110,7 @@ public:
     }
 
     void setWorkMem(const string &workMem) {
-        InformacoesDb::workMem = workMem;
+        InformacoesPostgres::workMem = workMem;
     }
 
     const string &getMaintenanceWorkMem() const {
@@ -118,7 +118,7 @@ public:
     }
 
     void setMaintenanceWorkMem(const string &maintenanceWorkMem) {
-        InformacoesDb::maintenanceWorkMem = maintenanceWorkMem;
+        InformacoesPostgres::maintenanceWorkMem = maintenanceWorkMem;
     }
 
     const string &getReplacementWortTuples() const {
@@ -126,7 +126,7 @@ public:
     }
 
     void setReplacementWortTuples(const string &replacementWortTuples) {
-        InformacoesDb::replacementWortTuples = replacementWortTuples;
+        InformacoesPostgres::replacementWortTuples = replacementWortTuples;
     }
 
     const string &getMaxStackDepth() const {
@@ -134,7 +134,7 @@ public:
     }
 
     void setMaxStackDepth(const string &maxStackDepth) {
-        InformacoesDb::maxStackDepth = maxStackDepth;
+        InformacoesPostgres::maxStackDepth = maxStackDepth;
     }
 
     const string &getMaxPreparedTransactions() const {
@@ -142,7 +142,7 @@ public:
     }
 
     void setMaxPreparedTransactions(const string &maxPreparedTransactions) {
-        InformacoesDb::maxPreparedTransactions = maxPreparedTransactions;
+        InformacoesPostgres::maxPreparedTransactions = maxPreparedTransactions;
     }
 };
 

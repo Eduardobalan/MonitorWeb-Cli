@@ -19,6 +19,8 @@ private:
 public:
     Result(unsigned short status, const string &result, const string &error);
 
+    virtual ~Result();
+
     unsigned short getStatus() const {
         return status;
     }
