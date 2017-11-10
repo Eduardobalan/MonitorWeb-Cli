@@ -13,7 +13,7 @@ using namespace std;
 class SystemLog {
 private:
     static bool mostrarLogLog;
-    static bool mostrarLogWorming;
+    static bool mostrarLogWarming;
     static bool mostrarLogErro;
     static bool ativarLog;
     static bool ativarLogArquivo;
@@ -34,12 +34,12 @@ public:
         SystemLog::mostrarLogLog = mostrarLogLog;
     }
 
-    static bool isMostrarLogWorming() {
-        return mostrarLogWorming;
+    static bool isMostrarLogWarming() {
+        return mostrarLogWarming;
     }
 
-    static void setMostrarLogWorming(bool mostrarLogWorming) {
-        SystemLog::mostrarLogWorming = mostrarLogWorming;
+    static void setMostrarLogWarming(bool mostrarLogWarming) {
+        SystemLog::mostrarLogWarming = mostrarLogWarming;
     }
 
     static bool isMostrarLogErro() {

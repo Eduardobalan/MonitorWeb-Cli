@@ -42,7 +42,11 @@ void ConfigFile::load() {
     }
     std::string line;
     while (std::getline(file, line)) {
-        std::size_t pos = line.find(symbol.c_str());
+        std::size_t pos = line.find("#");
+        if (pos != std::string::npos) {
+            line = line.substr(0, pos);
+        }
+        pos = line.find(symbol.c_str());
         if (pos != std::string::npos) {
             std::string property = trim(line.substr(0, pos));
             std::string value = trim(line.substr(pos + 1, line.size() - pos - 1));

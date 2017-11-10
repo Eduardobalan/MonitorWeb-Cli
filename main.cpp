@@ -3,13 +3,13 @@
 //
 #include <stdlib.h>
 #include <unistd.h>
+#include <boost/date_time/date.hpp>
+#include <map>
 #include "Util/SystemLog.h"
 #include "Entity/InformacoesCpu.h"
-#include "Entity/MonitoramentoCpu.h"
-#include "Entity/InformacoesMemoria.h"
-#include "Entity/MonitoramentoMemoria.h"
-#include "Entity/InformacoesSwap.h"
-#include "Entity/MonitoramentoSwap.h"
+#include "Entity/ServidorConfigDb.h"
+#include "Entity/MonitoramentoPostgres.h"
+#include "Entity/ThreadLerServidorConfigDb.h"
 
 using namespace std;
 
@@ -30,31 +30,65 @@ int main(int argc, char* argv[]) {
     srvConfig.lerConfiguracoesLocais();
     srvConfig.threadSincronizarConfigLocalComApi(&srvConfig);
 
-    //############################
-    //# Informacoes  do  sistema #
-    //############################
+    ServidorConfigDb srvConfigDbParaThread;
+    std::map<long, MonitoramentoPostgres*> mapMonitoramentoPostgres;
 
-    InformacoesCpu informacoesCpu;
-    informacoesCpu.monitorarInformacoesCpu(&srvConfig);
+    ThreadLerServidorConfigDb threadLerServidorConfigDb;
+    threadLerServidorConfigDb.threadSincronizarConfigLocalComApi(&srvConfig, &mapMonitoramentoPostgres);
 
-    InformacoesMemoria informacoesMemoria;
-    informacoesMemoria.monitorarInformacoesMemoria(&srvConfig);
 
-    InformacoesSwap informacoesSwap;
-    informacoesSwap.monitorarInformacoesSwap(&srvConfig);
+//    //############################
+//    //# Informacoes  do  sistema #
+//    //############################
+//
+//    InformacoesCpu informacoesCpu;
+//    informacoesCpu.monitorarInformacoesCpu(&srvConfig);
+//
+//    InformacoesMemoria informacoesMemoria;
+//    informacoesMemoria.monitorarInformacoesMemoria(&srvConfig);
+//
+//    InformacoesSwap informacoesSwap;
+//    informacoesSwap.monitorarInformacoesSwap(&srvConfig);
+//
+//    InformacoesPostgres informacoesPostgres;
+//    informacoesPostgres.monitorarInformacoesPostgres(&srvConfig);
 
-    //############################
-    //# Monitoramento do sistema #
-    //############################
+//    //############################
+//    //# Monitoramento do sistema #
+//    //############################
+//
+//    MonitoramentoCpu monitoramentoCpu;
+//    monitoramentoCpu.threadMonitorarMonitoramentoCpu(&srvConfig, &informacoesCpu, &monitoramentoCpu);
+//
+//    MonitoramentoMemoria monitoramentoMemoria;
+//    monitoramentoMemoria.threadMonitorarMonitoramentoMemoria(&srvConfig, &informacoesMemoria, &monitoramentoMemoria);
+//
+//    MonitoramentoSwap monitoramentoSwap;
+//    monitoramentoSwap.threadMonitorarMonitoramentoSwap(&srvConfig, &informacoesSwap, &monitoramentoSwap);
+//
+//
+//    std::map<long, MonitoramentoPostgres*> mapMonitoramentoPostgres;
+//
+//    do{
+//        for(std::map<char,int>::iterator it=mymap.begin(); it!=mymap.end(); ++it)
+//        std::cout << it->first << " => " << it->second << '\n';
+//
+//
+//        sleep(srvConfig.getIntervaloDB());
+//    }
+//    while(true);
 
-    MonitoramentoCpu monitoramentoCpu;
-    monitoramentoCpu.threadMonitorarMonitoramentoCpu(&srvConfig, &informacoesCpu, &monitoramentoCpu);
 
-    MonitoramentoMemoria monitoramentoMemoria;
-    monitoramentoMemoria.threadMonitorarMonitoramentoMemoria(&srvConfig, &informacoesMemoria, &monitoramentoMemoria);
 
-    MonitoramentoSwap monitoramentoSwap;
-    monitoramentoSwap.threadMonitorarMonitoramentoSwap(&srvConfig, &informacoesSwap, &monitoramentoSwap);
+//    MonitoramentoPostgres monitoramentoPostgres1;
+//    monitoramentoPostgres1.threadSincronizarConfigLocalComApi(srvConfig, ssssssssssssssssss);
+
+
+
+
+//
+//    MonitoramentoPostgres monitoramentoPostgres;
+//    monitoramentoPostgres.lerMonitorarPostgres();
 
     sleep(1000000000);
 }

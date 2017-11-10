@@ -27,6 +27,7 @@ void ServidorConfig::lerConfiguracoesLocais(){
         setId(configFile.getInt("id"));
         servidor.setId(configFile.getInt("servidorid"));
         setIntervaloLeituraConfiguracoes(configFile.getInt("intervaloLeituraConfiguracoes"));
+        setIntervaloLeituraConfiguracoesDb(configFile.getInt("intervaloLeituraConfiguracoesDb"));
         setIntervaloCpu(configFile.getInt("intervaloCpu"));
         setIntervaloDB(configFile.getInt("intervaloDB"));
         setIntervaloMemoria(configFile.getInt("intervaloMemoria"));
@@ -52,6 +53,7 @@ void ServidorConfig::salvarConfiguracoesLocais(){
         configFile.save("id", getId());
         configFile.save("servidorid", servidor.getId());
         configFile.save("intervaloLeituraConfiguracoes", getIntervaloLeituraConfiguracoes());
+        configFile.save("intervaloLeituraConfiguracoesDb", getIntervaloLeituraConfiguracoesDb());
         configFile.save("intervaloCpu", getIntervaloCpu());
         configFile.save("intervaloDB", getIntervaloDB());
         configFile.save("intervaloMemoria", getIntervaloMemoria());
@@ -60,6 +62,8 @@ void ServidorConfig::salvarConfiguracoesLocais(){
         configFile.save("hostMonitoramento2", getHostMonitoramento2());
         configFile.save("porta", getPorta());
         configFile.save("porta2", getPorta2());
+
+
 
         configFile.commit();
         SystemLog::execLog('l',"ServidorConfig: Arquivo de configurações locais atualizados com API.");
@@ -103,6 +107,7 @@ std::string ServidorConfig::toJson(){
     pt.put ("id", getId());
     pt.put ("servidor.id", getServidor().getId());
     pt.put ("intervaloLeituraConfiguracoes", getIntervaloLeituraConfiguracoes());
+    pt.put ("intervaloLeituraConfiguracoesDb", getIntervaloLeituraConfiguracoesDb());
     pt.put ("intervaloCpu", getIntervaloCpu());
     pt.put ("intervaloMemoria", getIntervaloMemoria());
     pt.put ("intervaloSwap", getIntervaloSwap());
@@ -127,6 +132,7 @@ bool ServidorConfig::fromJson(const std::string &json){
     setId(pt2.get<long> ("id"));
     //setServidor(pt2.get<Servidor> ("servidor"));
     setIntervaloLeituraConfiguracoes(pt2.get<long> ("intervaloLeituraConfiguracoes"));
+    setIntervaloLeituraConfiguracoesDb(pt2.get<long> ("intervaloLeituraConfiguracoesDb"));
     setIntervaloCpu(pt2.get<long> ("intervaloCpu"));
     setIntervaloMemoria(pt2.get<long> ("intervaloMemoria"));
     setIntervaloSwap(pt2.get<long> ("intervaloSwap"));
@@ -136,8 +142,6 @@ bool ServidorConfig::fromJson(const std::string &json){
     setPorta(pt2.get<long> ("porta"));
     setPorta2(pt2.get<long> ("porta2"));
 
-
-
     return true;
 }
 void ServidorConfig::print() {
@@ -146,6 +150,7 @@ void ServidorConfig::print() {
     cout << "Id: " << getId() << endl;
     cout << "Servidor: " << getServidor().getId() << endl;
     cout << "Intervalo Leitura Configurações: " << getIntervaloLeituraConfiguracoes() << endl;
+    cout << "Intervalo Leitura ConfiguraçõesDb: " << getIntervaloLeituraConfiguracoesDb() << endl;
     cout << "Intervalo cpu: " << getIntervaloCpu() << endl;
     cout << "Intervalo memoria: " << getIntervaloMemoria() << endl;
     cout << "Intervalo swap: " << getIntervaloSwap() << endl;

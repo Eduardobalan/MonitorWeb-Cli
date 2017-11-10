@@ -23,6 +23,7 @@ private:
     long id;
     Servidor servidor;
     long intervaloLeituraConfiguracoes;
+    long intervaloLeituraConfiguracoesDb;
     long intervaloCpu;
     long intervaloMemoria;
     long intervaloSwap;
@@ -125,6 +126,14 @@ public:
         ServidorConfig::intervaloLeituraConfiguracoes = intervaloLeituraConfiguracoes;
     }
 
+    long getIntervaloLeituraConfiguracoesDb() const {
+        return intervaloLeituraConfiguracoesDb;
+    }
+
+    void setIntervaloLeituraConfiguracoesDb(long intervaloLeituraConfiguracoesDb) {
+        ServidorConfig::intervaloLeituraConfiguracoesDb = intervaloLeituraConfiguracoesDb;
+    }
+
     long getPorta() const {
         return porta;
     }
@@ -140,6 +149,7 @@ public:
     void setPorta2(long porta2) {
         ServidorConfig::porta2 = porta2;
     }
+
 };
 
 
