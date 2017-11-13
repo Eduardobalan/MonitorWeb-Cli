@@ -3,9 +3,7 @@
 //
 
 #include "InformacoesCpu.h"
-#include "ServidorConfig.h"
 #include "../Util/ConfigFile/ConfigFile.h"
-#include "../Util/SystemLog.h"
 #include <boost/algorithm/string.hpp>
 
 using namespace std;
@@ -25,7 +23,6 @@ void InformacoesCpu::lerInformacoesCpu(){
         chdir("/proc/");
         ConfigFile configFile("cpuinfo", ":");
         configFile.load();
-        SystemLog::execLog('l',"InformacoesCpu: lendo InformacoesCpu");
 
         setNome(configFile.getString("model name"));
 
@@ -46,30 +43,31 @@ void InformacoesCpu::lerInformacoesCpu(){
 
 void InformacoesCpu::monitorarInformacoesCpu(ServidorConfig *srvConfig){
 
-    servidor.setId(srvConfig->getServidor().getId());
-
-    string path = "/servidor/"+ to_string(srvConfig->getServidor().getId()) +"/informacoescpu/";
-
-    Post post(path, srvConfig->getHostMonitoramento(), srvConfig->getPorta());
-    Result *result;
+    Result *result = nullptr;
     do{
+        if(result != nullptr){
+            delete result;
+        }
+
+        servidor.setId(srvConfig->getServidor().getId());
+
+        string path = "/servidor/"+ to_string(srvConfig->getServidor().getId()) +"/informacoescpu/";
+
+        Post post(path, srvConfig->getHostMonitoramento(), srvConfig->getPorta());
+
         lerInformacoesCpu();
 
         result = post.exec(toJson());
-        SystemLog::execLog('l',"InformacoesCpu : "+srvConfig->getHostMonitoramento()+":"+to_string(srvConfig->getPorta())+ path);
         if(result->getStatus() == 200){
             fromJson(result->getResult());
-            SystemLog::execLog('l',"InformacoesCpu Resultado: "+result->getResult());
-        }else{
-            SystemLog::execLog('e',"InformacoesCpu: Status:"+result->getResult() +" erro:"+ result->getError());
-            SystemLog::execLog('e',"InformacoesCpu json enviado: "+toJson());
         }
+        result->imprimir("InformacoesCpu");
     }
     while(result->getStatus() != 200);
+    delete result;
 }
 
 std::string InformacoesCpu::toJson(){
-    SystemLog::execLog('l',"InformacoesCpu: Tranformando Objeto em Json");
     ptree pt;
     pt.put("servidor.id", servidor.getId());
     pt.put("nome", getNome());
@@ -84,7 +82,6 @@ std::string InformacoesCpu::toJson(){
 }
 
 bool InformacoesCpu::fromJson(const std::string &json){
-    SystemLog::execLog('l',"ServidorConfig: Trasformando o json em objeto");
     ptree pt2;
     std::istringstream is (json);
     read_json (is, pt2);

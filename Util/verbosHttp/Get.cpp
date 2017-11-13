@@ -3,6 +3,7 @@
 //
 
 #include "Get.h"
+#include "../SystemLog.h"
 #include <iostream>
 #include <boost/asio.hpp>
 
@@ -63,12 +64,10 @@ Result* Get::exec() {
         std::string status_message;
         std::getline(response_stream, status_message);
         if (!response_stream || http_version.substr(0, 5) != "HTTP/") {
-            std::cerr << "Invalid response\n";
-            return new Result(0, "", "Invalid response!");
+            return new Result(0, "", "Invalid response!", getPath(), getHost(), getPort(), "");
         }
         if (status_code != 200) {
-            std::cerr << "Response returned with status code " << status_code << "\n";
-            return new Result(status_code, "", "Response returned with status code!");
+            return new Result(status_code, "", "Response returned with status code!", getPath(), getHost(), getPort(), "");
         }
 
         // Read the response headers, which are terminated by a blank line.
@@ -88,7 +87,7 @@ Result* Get::exec() {
 //            ss << &response;
 //            std::string s = ss.str();
 //
-//            return new Result(status_code, s, "");
+//            return new Result(status_code, s, "", getPath(), getHost(), getPort());
 //        }
 
         // Read until EOF, writing data to output as we go.
@@ -102,12 +101,13 @@ Result* Get::exec() {
         if (error != boost::asio::error::eof){
             throw boost::system::system_error(error);
         }else{
-            return new Result(status_code, s, "");
+            return new Result(status_code, s, "", getPath(), getHost(), getPort(), "");
         }
 
     }
     catch (std::exception& e)
     {
+        SystemLog::execLog('e',"Get: Exception: ");
         std::cerr << "Exception: " << e.what() << "\n";
     }
 
@@ -116,17 +116,17 @@ Result* Get::exec() {
 bool Get::validate() {
     if (getPort() == 0)
         {
-            std::cout << "Port não definida!" << std::endl;
+            SystemLog::execLog('e',"Get: Port não definida!");
             return false;
         }
     if (getHost().length() == 0)
         {
-            std::cout << "Host não definido!" << std::endl;
+            SystemLog::execLog('e',"Get: Host não definido!");
             return false;
         }
     if (getPath().length() == 0)
         {
-            std::cout << "Path não definido!" << std::endl;
+            SystemLog::execLog('e',"Get: Path não definido!");
             return false;
         }
 }

@@ -85,10 +85,9 @@ void ServidorConfig::sincronizarConfigLocalComApi(ServidorConfig *srvConfig){
         if(result->getStatus() == 200){
             srvConfig->fromJson(result->getResult());
             srvConfig->salvarConfiguracoesLocais();
-            SystemLog::execLog('l',"ServidorConfig: Lendo api configurações do servidor:."+srvConfig->getHostMonitoramento()+":"+to_string(srvConfig->getPorta())+ path);
-        }else{
-            SystemLog::execLog('e',"ServidorConfig: Lendo api configurações do servidor: Status:"+result->getResult() +" erro:"+ result->getError());
         }
+        result->imprimir("ServidorConfig");
+        delete result;
         sleep(srvConfig->getIntervaloLeituraConfiguracoes());
     }
     while(true);
@@ -102,7 +101,6 @@ void ServidorConfig::threadSincronizarConfigLocalComApi(ServidorConfig *srvConfi
 };
 
 std::string ServidorConfig::toJson(){
-    SystemLog::execLog('l',"ServidorConfig: Tranformando Objeto em Json;");
     ptree pt;
     pt.put ("id", getId());
     pt.put ("servidor.id", getServidor().getId());
@@ -124,13 +122,12 @@ std::string ServidorConfig::toJson(){
 }
 
 bool ServidorConfig::fromJson(const std::string &json){
-    SystemLog::execLog('l',"ServidorConfig: Trasformando o json em objeto");
     ptree pt2;
     std::istringstream is (json);
     read_json (is, pt2);
 
     setId(pt2.get<long> ("id"));
-    //setServidor(pt2.get<Servidor> ("servidor"));
+    servidor.setId(pt2.get<long> ("servidor.id"));
     setIntervaloLeituraConfiguracoes(pt2.get<long> ("intervaloLeituraConfiguracoes"));
     setIntervaloLeituraConfiguracoesDb(pt2.get<long> ("intervaloLeituraConfiguracoesDb"));
     setIntervaloCpu(pt2.get<long> ("intervaloCpu"));

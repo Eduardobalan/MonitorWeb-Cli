@@ -6,7 +6,6 @@
 #include <boost/algorithm/string.hpp>
 #include "MonitoramentoMemoria.h"
 #include "../Util/ConfigFile/ConfigFile.h"
-#include "../Util/SystemLog.h"
 #include "../Util/verbosHttp/Post.h"
 
 MonitoramentoMemoria::MonitoramentoMemoria() {}
@@ -22,8 +21,6 @@ void MonitoramentoMemoria::lerMonitorarMemoria(){
         chdir("/proc/");
         ConfigFile configFile("meminfo", ":");
         configFile.load();
-        SystemLog::execLog('l',"MonitoramentoMemoria: Lendo arquivo de locais.");
-
 
         string Active =  configFile.getString("Active");
         boost::erase_all(Active, " KB");
@@ -60,14 +57,11 @@ void MonitoramentoMemoria::monitorarMonitoramentoMemoria(ServidorConfig *srvConf
         monitoramentoMemoria->lerMonitorarMemoria();
 
         result = post.exec(monitoramentoMemoria->toJson());
-        if(result->getStatus() == 200){
-            //monitoramentoCpu->fromJson(result->getResult());
-            SystemLog::execLog('l',"MonitoramentoMemoria: "+srvConfig->getHostMonitoramento()+":"+to_string(srvConfig->getPorta())+ path);
-        }else{
-            SystemLog::execLog('e',"MonitoramentoMemoria: Status:"+result->getResult() +" erro:"+ result->getError());
-            SystemLog::execLog('e',"json: "+monitoramentoMemoria->toJson());
 
-        }
+        result->imprimir("MonitoramentoMemoria");
+
+        delete result;
+
         sleep(srvConfig->getIntervaloMemoria());
     }
     while(true);
@@ -80,7 +74,6 @@ void MonitoramentoMemoria::threadMonitorarMonitoramentoMemoria(ServidorConfig *s
 };
 
 std::string MonitoramentoMemoria::toJson(){
-    SystemLog::execLog('l',"MonitoramentoMemoria: Tranformando Objeto em Json;");
 
     ptree pt;
     pt.put ("active", getActive());
@@ -96,7 +89,6 @@ std::string MonitoramentoMemoria::toJson(){
 }
 
 bool MonitoramentoMemoria::fromJson(const std::string &json){
-    SystemLog::execLog('l',"MonitoramentoMemoria: Trasformando o json em objeto");
     ptree pt2;
     std::istringstream is (json);
     read_json (is, pt2);

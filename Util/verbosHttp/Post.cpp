@@ -3,6 +3,7 @@
 //
 
 #include "Post.h"
+#include "../SystemLog.h"
 #include <iostream>
 #include <boost/asio.hpp>
 
@@ -66,13 +67,11 @@ Result* Post::exec(const string &json) {
         std::getline(response_stream, status_message);
         if (!response_stream || http_version.substr(0, 5) != "HTTP/")
         {
-            std::cout << "Invalid response\n";
-            return new Result(400, "", "Invalid response!");
+            return new Result(400, "", "Invalid response!", getPath(), getHost(), getPort(), json);
         }
         if (status_code != 200)
         {
-            std::cout << "Response returned with status code " << status_code << "\n";
-            return new Result(status_code, "", "Response returned with status code!");
+            return new Result(status_code, "", "Response returned with status code!", getPath(), getHost(), getPort(), json);
         }
 
         // Read the response headers, which are terminated by a blank line.
@@ -83,14 +82,14 @@ Result* Post::exec(const string &json) {
         while (std::getline(response_stream, header) && header != "\r"){
 
         }
-            //std::cout << header << "\n";
-        //std::cout << "\n";
-
-        // Write whatever content we already have to output.
+//            std::cout << header << "\n";
+//        std::cout << "\n";
+//
+//         Write whatever content we already have to output.
 //        if (response.size() > 0)
 //            std::cout << &response;
-
-        // Read until EOF, writing data to output as we go.
+//
+        //Read until EOF, writing data to output as we go.
         boost::system::error_code error;
         while (boost::asio::read(socket, response, boost::asio::transfer_at_least(1), error)){
         }
@@ -102,12 +101,13 @@ Result* Post::exec(const string &json) {
         if (error != boost::asio::error::eof){
             throw boost::system::system_error(error);
         }else{
-            return new Result(status_code, s,"");
+            return new Result(status_code, s,"", getPath(), getHost(), getPort(), json);
         }
     }
     catch (std::exception& e)
     {
-        std::cout << "Exception: " << e.what() << "\n";
+        SystemLog::execLog('e',": Post Exception: ");
+        std::cout << "Post Exception:" << e.what() << "\n";
     }
 
 }
@@ -117,17 +117,17 @@ Result* Post::exec(const string &json) {
 bool Post::validate() {
     if (getPort() == 0)
     {
-        std::cout << "Port não definida!" << std::endl;
+        SystemLog::execLog('e',": Post: Port não definida!: ");
         return false;
     }
     if (getHost().length() == 0)
     {
-        std::cout << "Host não definido!" << std::endl;
+        SystemLog::execLog('e',": Post: Host não definido!: ");
         return false;
     }
     if (getPath().length() == 0)
     {
-        std::cout << "Path não definido!" << std::endl;
+        SystemLog::execLog('e',": Post: Path não definido!: ");
         return false;
     }
 }

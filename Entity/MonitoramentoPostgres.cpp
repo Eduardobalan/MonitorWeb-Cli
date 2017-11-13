@@ -10,11 +10,14 @@
 #include "../Util/SystemData.h"
 
 MonitoramentoPostgres::MonitoramentoPostgres() {
+    cout << "---------------------------- Construtor MonitoramentoPostgres" << endl;
     servidorConfigDb = new ServidorConfigDb;
 }
 
 MonitoramentoPostgres::~MonitoramentoPostgres() {
+    cout << "---------------------------- Destrutor ~MonitoramentoPostgres" << endl;
     if(thread != nullptr){
+        cout << "---------------------------- Destrutor ~thread" << endl;
         delete thread;
     }
     if(servidorConfigDb != nullptr){
@@ -27,14 +30,15 @@ void MonitoramentoPostgres::lerMonitorarPostgres(MonitoramentoPostgres *monitora
 
     monitoramentoPostgres->setTipoExecucao(monitoramentoPostgres->getServidorConfigDb()->getSgdbTipoExec());
 
-    if(monitoramentoPostgres->getTipoExecucao().compare("BACKUP") == 0){
+    if (monitoramentoPostgres->getTipoExecucao().compare("BACKUP") == 0) {
 
-        string pg_dumpComando = "pg_dump -Fc -v -b -f "+
-                monitoramentoPostgres->getServidorConfigDb()->getNomeDb() + SystemData::dataHora() +
-                ".sql -U postgres "+monitoramentoPostgres->getServidorConfigDb()->getNomeDb()+
-                " > BackupLog.log";
+        string pg_dumpComando = "pg_dump -Fc -v -b "
+                                " -f "+ monitoramentoPostgres->getServidorConfigDb()->getNomeDb() + SystemData::dataHora()+".sql "+
+                                " -h "+monitoramentoPostgres->getServidorConfigDb()->getIp() +
+                                " -p "+to_string(monitoramentoPostgres->getServidorConfigDb()->getPorta()) +
+                                " -U postgres " + monitoramentoPostgres->getServidorConfigDb()->getNomeDb();
 
-        SystemLog::execLog('l',"MonitoramentoPostgres{"+ threadId +"}:"+pg_dumpComando);
+        SystemLog::execLog('l', "MonitoramentoPostgres{" + threadId + "}:" + pg_dumpComando);
 
         char *aux = new char[pg_dumpComando.length() + 1];
 
@@ -45,11 +49,14 @@ void MonitoramentoPostgres::lerMonitorarPostgres(MonitoramentoPostgres *monitora
         return;
     }
 
-    if(monitoramentoPostgres->getTipoExecucao().compare("VACUUM") == 0){
+    if (monitoramentoPostgres->getTipoExecucao().compare("VACUUM") == 0) {
 
-        string vacuumdbComando = "vacuumdb -f -U "+ monitoramentoPostgres->getServidorConfigDb()->getNomeDb() +" postgres > vacuumdb.log";
+        string vacuumdbComando = "vacuumdb -f -U " + monitoramentoPostgres->getServidorConfigDb()->getNomeDb() +
+                                    " -h "+monitoramentoPostgres->getServidorConfigDb()->getIp() +
+                                    " -p "+to_string(monitoramentoPostgres->getServidorConfigDb()->getPorta()) +
+                                    " postgres > vacuumdb.log";
 
-        SystemLog::execLog('l',"MonitoramentoPostgres{"+ threadId +"}:"+vacuumdbComando);
+        SystemLog::execLog('l', "MonitoramentoPostgres{" + threadId + "}:" + vacuumdbComando);
 
         char *aux = new char[vacuumdbComando.length() + 1];
 
@@ -60,7 +67,7 @@ void MonitoramentoPostgres::lerMonitorarPostgres(MonitoramentoPostgres *monitora
         return;
     }
 
-    SystemLog::execLog('e',"MonitoramentoPostgres{"+ threadId +"}: O tipo passado não foi um VACUUM nem um BACKUP");
+        SystemLog::execLog('e',"MonitoramentoPostgres{" + threadId + "}: O tipo passado não foi um VACUUM nem um BACKUP");
 
 };
 
@@ -70,28 +77,26 @@ void MonitoramentoPostgres::sincronizarConfigLocalComApi(ServidorConfig *srvConf
     //monitoramentoPostgres->setInformacoesMemoria(informacoesMemoria);
     do{
         sleep(SrvConfigDb->getIntervaloExec());
+        if(monitoramentoPostgres->getServidorConfigDb()->isAtivo()) {
+            string path = "/servidor/informacoes/"+to_string(monitoramentoPostgres->getServidorConfigDb()->getId())+"/monitoramentopostgres";
+            Post post(path, srvConfig->getHostMonitoramento(), srvConfig->getPorta());
 
-        string path = "/servidor/informacoes/"+to_string(monitoramentoPostgres->getServidorConfigDb()->getId())+"/monitoramentopostgres";
-        Post post(path, srvConfig->getHostMonitoramento(), srvConfig->getPorta());
+            monitoramentoPostgres->lerMonitorarPostgres(monitoramentoPostgres);
 
-        monitoramentoPostgres->lerMonitorarPostgres(monitoramentoPostgres);
+            result = post.exec(monitoramentoPostgres->toJson());
 
-        result = post.exec(monitoramentoPostgres->toJson());
-        if(result->getStatus() == 200){
-            //monitoramentoCpu->fromJson(result->getResult());
-            SystemLog::execLog('l',"MonitoramentoPostgres{"+ monitoramentoPostgres->threadId +"}: "+srvConfig->getHostMonitoramento()+":"+to_string(srvConfig->getPorta())+ path);
+            result->imprimir("MonitoramentoPostgres{"+ monitoramentoPostgres->threadId +"}");
+
+            delete result;
         }else{
-            SystemLog::execLog('e',"MonitoramentoPostgres{"+ monitoramentoPostgres->threadId +"}: Status:"+result->getResult() +"\n Erro:"+ result->getError() +"\n Json: "+monitoramentoPostgres->toJson());
+            SystemLog::execLog('w',"MonitoramentoPostgres{" + monitoramentoPostgres->threadId + "}: Registro de monitoramento esta desativado.");
         }
-        delete result;
     }
     while(true);
 
 };
 
 string MonitoramentoPostgres::toJson(){
-    SystemLog::execLog('l',"MonitoramentoPostgres{"+ threadId +"}: Tranformando Objeto em Json;");
-
     ptree pt;
     pt.put ("servidorConfigDb.id", getServidorConfigDb()->getId());
     pt.put ("tipoExecucao", getTipoExecucao());
@@ -105,9 +110,8 @@ string MonitoramentoPostgres::toJson(){
 };
 
 void MonitoramentoPostgres::threadSincronizarConfigLocalComApi(ServidorConfig *srvConfig, ServidorConfigDb *SrvConfigDb, MonitoramentoPostgres *monitoramentoPostgres){
-    SystemLog::execLog('l',"MonitoramentoPostgres: Iniciando Thread Sincronizar local com API");
+    SystemLog::execLog('l',"MonitoramentoPostgres: Iniciando uma Thread de Sincronizar local com API");
     thread = new std::thread(sincronizarConfigLocalComApi, srvConfig, SrvConfigDb, monitoramentoPostgres);
-
 
     //Salva o id da thread no monitoramentoPostgres.
     auto myid = thread->get_id();

@@ -15,9 +15,15 @@ private:
     unsigned short status;
     string result;
     string error;
+    string host;
+    unsigned short port;
+    string path;
+    string json;
 
 public:
-    Result(unsigned short status, const string &result, const string &error);
+    Result(unsigned short status, const string &result, const string &error, const string &path, const string &host, unsigned short port, const string json);
+
+    void imprimir(const string &origem);
 
     virtual ~Result();
 
@@ -43,6 +49,38 @@ public:
 
     void setError(const string &error) {
         Result::error = error;
+    }
+
+    const string &getHost() const {
+        return host;
+    }
+
+    void setHost(const string &host) {
+        Result::host = host;
+    }
+
+    unsigned short getPort() const {
+        return port;
+    }
+
+    void setPort(unsigned short port) {
+        Result::port = port;
+    }
+
+    const string &getPath() const {
+        return path;
+    }
+
+    void setPath(const string &path) {
+        Result::path = path;
+    }
+
+    const string &getjson() const {
+        return json;
+    }
+
+    void setjson(const string &json) {
+        Result::json = json;
     }
 };
 

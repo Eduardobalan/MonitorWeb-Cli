@@ -4,7 +4,6 @@
 
 #include "MonitoramentoCpu.h"
 #include "../Util/ConfigFile/ConfigFile.h"
-#include "../Util/SystemLog.h"
 
 using namespace std;
 
@@ -19,7 +18,7 @@ void MonitoramentoCpu::lerMonitorarCpu(){
         chdir("/proc/");
         ConfigFile configFile("cpuinfo", ":");
         configFile.load();
-        SystemLog::execLog('l',"MonitoramentoCpu: Lendo arquivo de configurações locais.");
+
 
         setNumeroNucleos(configFile.getInt("core id"));
 
@@ -45,27 +44,23 @@ void MonitoramentoCpu::monitorarMonitoramentoCpu(ServidorConfig *srvConfig, Info
         monitoramentoCpu->lerMonitorarCpu();
 
         result = post.exec(monitoramentoCpu->toJson());
-        if(result->getStatus() == 200){
-            //monitoramentoCpu->fromJson(result->getResult());
-            SystemLog::execLog('l',"MonitoramentoCpu: "+srvConfig->getHostMonitoramento()+":"+to_string(srvConfig->getPorta())+ path);
-        }else{
-            SystemLog::execLog('e',"MonitoramentoCpu: Status:"+result->getResult() +" erro:"+ result->getError());
-            SystemLog::execLog('e',"json: "+monitoramentoCpu->toJson());
 
-        }
+        result->imprimir("MonitoramentoCpu");
+
+        delete result;
+
         sleep(srvConfig->getIntervaloCpu());
     }
     while(true);
 }
 
 void MonitoramentoCpu::threadMonitorarMonitoramentoCpu(ServidorConfig *srvConfig, InformacoesCpu *informacoesCpu, MonitoramentoCpu *monitoramentoCpu){
-    SystemLog::execLog('l',"MonitoramentoCpu: Iniciando Thread Sincronizar Config local com API");
+    SystemLog::execLog('l',"MonitoramentoCpu: Iniciando Thread ");
     std::thread threadx(monitorarMonitoramentoCpu, srvConfig, informacoesCpu, monitoramentoCpu);
     threadx.detach();
 };
 
 std::string MonitoramentoCpu::toJson(){
-    SystemLog::execLog('l',"MonitoramentoCpu: Tranformando Objeto em Json;");
     ptree pt;
     pt.put ("numeroNucleos", getNumeroNucleos());
     pt.put ("cpuMhz", getCpuMhz());
@@ -78,7 +73,6 @@ std::string MonitoramentoCpu::toJson(){
 }
 
 bool MonitoramentoCpu::fromJson(const std::string &json){
-    SystemLog::execLog('l',"MonitoramentoCpu: Trasformando o json em objeto");
     ptree pt2;
     std::istringstream is (json);
     read_json (is, pt2);

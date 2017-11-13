@@ -6,7 +6,7 @@
 #define WEBMONITOR_CLIENTE_MONITORAMENTODB_H
 
 
-#include "InformacoesPostgres.h"
+#include "MonitoramentoPostgresInformacoes.h"
 #include "ServidorConfigDb.h"
 
 class MonitoramentoPostgres {
