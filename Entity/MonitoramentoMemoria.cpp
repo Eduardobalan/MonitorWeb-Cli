@@ -6,12 +6,14 @@
 #include <boost/algorithm/string.hpp>
 #include "MonitoramentoMemoria.h"
 #include "../Util/ConfigFile/ConfigFile.h"
-#include "../Util/verbosHttp/Post.h"
+#include "../Util/resource/Resource.h"
 
 MonitoramentoMemoria::MonitoramentoMemoria() {}
 
 MonitoramentoMemoria::~MonitoramentoMemoria() {
-
+    if(threadx != nullptr){
+        delete threadx;
+    }
 }
 
 
@@ -53,10 +55,10 @@ void MonitoramentoMemoria::monitorarMonitoramentoMemoria(ServidorConfig *srvConf
     monitoramentoMemoria->setInformacoesMemoria(informacoesMemoria);
     do{
         string path = "/servidor/informacoes/"+to_string(informacoesMemoria->getId())+"/monitoramentomemoria";
-        Post post(path, srvConfig->getHostMonitoramento(), srvConfig->getPorta());
+        Resource resource(path, srvConfig->getHostMonitoramento(), srvConfig->getPorta());
         monitoramentoMemoria->lerMonitorarMemoria();
 
-        result = post.exec(monitoramentoMemoria->toJson());
+        result = resource.post(monitoramentoMemoria->toJson());
 
         result->imprimir("MonitoramentoMemoria");
 
@@ -64,13 +66,12 @@ void MonitoramentoMemoria::monitorarMonitoramentoMemoria(ServidorConfig *srvConf
 
         sleep(srvConfig->getIntervaloMemoria());
     }
-    while(true);
+    while(srvConfig->isFicarMonitorando());
 }
 
 void MonitoramentoMemoria::threadMonitorarMonitoramentoMemoria(ServidorConfig *srvConfig, InformacoesMemoria *informacoesMemoria, MonitoramentoMemoria *monitoramentoMemoria){
     SystemLog::execLog('l',"MonitoramentoMemoria: Iniciando Thread");
-    std::thread threadx(monitorarMonitoramentoMemoria, srvConfig, informacoesMemoria, monitoramentoMemoria);
-    threadx.detach();
+    threadx = new std::thread(monitorarMonitoramentoMemoria, srvConfig, informacoesMemoria, monitoramentoMemoria);
 };
 
 std::string MonitoramentoMemoria::toJson(){

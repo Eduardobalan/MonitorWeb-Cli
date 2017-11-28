@@ -5,20 +5,16 @@
 #include <thread>
 #include "MonitoramentoPostgres.h"
 #include "../Util/SystemLog.h"
-#include "../Util/verbosHttp/Result.h"
-#include "../Util/verbosHttp/Post.h"
 #include "../Util/SystemData.h"
+#include "../Util/resource/Resource.h"
 
 MonitoramentoPostgres::MonitoramentoPostgres() {
-    cout << "---------------------------- Construtor MonitoramentoPostgres" << endl;
     servidorConfigDb = new ServidorConfigDb;
 }
 
 MonitoramentoPostgres::~MonitoramentoPostgres() {
-    cout << "---------------------------- Destrutor ~MonitoramentoPostgres" << endl;
-    if(thread != nullptr){
-        cout << "---------------------------- Destrutor ~thread" << endl;
-        delete thread;
+    if(threadx != nullptr){
+        delete threadx;
     }
     if(servidorConfigDb != nullptr){
         delete servidorConfigDb;
@@ -45,7 +41,7 @@ void MonitoramentoPostgres::lerMonitorarPostgres(MonitoramentoPostgres *monitora
         std::strcpy(aux, pg_dumpComando.c_str());
         monitoramentoPostgres->setExito(std::system(aux));
 
-        delete aux;
+        delete[] aux;
         return;
     }
 
@@ -63,7 +59,7 @@ void MonitoramentoPostgres::lerMonitorarPostgres(MonitoramentoPostgres *monitora
         std::strcpy(aux, vacuumdbComando.c_str());
         monitoramentoPostgres->setExito(std::system(aux));
 
-        delete aux;
+        delete[] aux;
         return;
     }
 
@@ -79,11 +75,11 @@ void MonitoramentoPostgres::sincronizarConfigLocalComApi(ServidorConfig *srvConf
         sleep(SrvConfigDb->getIntervaloExec());
         if(monitoramentoPostgres->getServidorConfigDb()->isAtivo()) {
             string path = "/servidor/informacoes/"+to_string(monitoramentoPostgres->getServidorConfigDb()->getId())+"/monitoramentopostgres";
-            Post post(path, srvConfig->getHostMonitoramento(), srvConfig->getPorta());
+            Resource resource(path, srvConfig->getHostMonitoramento(), srvConfig->getPorta());
 
             monitoramentoPostgres->lerMonitorarPostgres(monitoramentoPostgres);
 
-            result = post.exec(monitoramentoPostgres->toJson());
+            result = resource.post(monitoramentoPostgres->toJson());
 
             result->imprimir("MonitoramentoPostgres{"+ monitoramentoPostgres->threadId +"}");
 
@@ -92,8 +88,7 @@ void MonitoramentoPostgres::sincronizarConfigLocalComApi(ServidorConfig *srvConf
             SystemLog::execLog('w',"MonitoramentoPostgres{" + monitoramentoPostgres->threadId + "}: Registro de monitoramento esta desativado.");
         }
     }
-    while(true);
-
+    while(srvConfig->isFicarMonitorando());
 };
 
 string MonitoramentoPostgres::toJson(){
@@ -111,15 +106,14 @@ string MonitoramentoPostgres::toJson(){
 
 void MonitoramentoPostgres::threadSincronizarConfigLocalComApi(ServidorConfig *srvConfig, ServidorConfigDb *SrvConfigDb, MonitoramentoPostgres *monitoramentoPostgres){
     SystemLog::execLog('l',"MonitoramentoPostgres: Iniciando uma Thread de Sincronizar local com API");
-    thread = new std::thread(sincronizarConfigLocalComApi, srvConfig, SrvConfigDb, monitoramentoPostgres);
+    threadx = new std::thread(sincronizarConfigLocalComApi, srvConfig, SrvConfigDb, monitoramentoPostgres);
 
     //Salva o id da thread no monitoramentoPostgres.
-    auto myid = thread->get_id();
+    auto myid = threadx->get_id();
     stringstream ss;
     ss << myid;
     threadId = ss.str();
 
-    thread->detach();
 };
 
 

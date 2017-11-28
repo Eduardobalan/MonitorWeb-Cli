@@ -6,9 +6,7 @@
 #include "ServidorConfigInformacoesDb.h"
 
 ServidorConfigInformacoesDb::ServidorConfigInformacoesDb() {
-    cout << "contrutor ServidorConfigInformacoesDb"  << endl;
 }
 
 ServidorConfigInformacoesDb::~ServidorConfigInformacoesDb() {
-    cout << "~destrutor ~ServidorConfigInformacoesDb"  << endl;
 }

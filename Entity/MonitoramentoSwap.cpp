@@ -6,14 +6,15 @@
 #include <thread>
 #include "MonitoramentoSwap.h"
 #include "../Util/ConfigFile/ConfigFile.h"
+#include "../Util/resource/Resource.h"
 
-#include "../Util/verbosHttp/Result.h"
-#include "../Util/verbosHttp/Post.h"
 
 MonitoramentoSwap::MonitoramentoSwap() {}
 
 MonitoramentoSwap::~MonitoramentoSwap() {
-
+    if(threadx != nullptr){
+        delete threadx;
+    }
 }
 
 void MonitoramentoSwap::lerMonitorarSwap(){
@@ -46,23 +47,24 @@ void MonitoramentoSwap::monitorarMonitoramentoSwap(ServidorConfig *srvConfig, In
     monitoramentoSwap->setInformacoesSwap(informacoesSwap);
     do{
         string path = "/servidor/informacoes/"+to_string(informacoesSwap->getId())+"/monitoramentoswap";
-        Post post(path, srvConfig->getHostMonitoramento(), srvConfig->getPorta());
+        Resource resource(path, srvConfig->getHostMonitoramento(), srvConfig->getPorta());
 
         monitoramentoSwap->lerMonitorarSwap();
 
-        result = post.exec(monitoramentoSwap->toJson());
+        result = resource.post(monitoramentoSwap->toJson());
 
         result->imprimir("MonitoramentoSwap");
 
+        delete result;
+
         sleep(srvConfig->getIntervaloSwap());
     }
-    while(true);
+    while(srvConfig->isFicarMonitorando());
 };
 
 void MonitoramentoSwap::threadMonitorarMonitoramentoSwap(ServidorConfig *srvConfig, InformacoesSwap *informacoesSwap, MonitoramentoSwap *monitoramentoSwap){
     SystemLog::execLog('l',"MonitoramentoSwap: Iniciando Thread");
-    std::thread threadx(monitorarMonitoramentoSwap, srvConfig, informacoesSwap, monitoramentoSwap);
-    threadx.detach();
+    threadx = new std::thread(monitorarMonitoramentoSwap, srvConfig, informacoesSwap, monitoramentoSwap);
 };
 
 string MonitoramentoSwap::toJson(){

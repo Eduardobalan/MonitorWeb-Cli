@@ -5,8 +5,9 @@
 #include <thread>
 #include "ServidorConfig.h"
 #include "../Util/ConfigFile/ConfigFile.h"
-#include "../Util/verbosHttp/Get.h"
 #include "../Util/SystemLog.h"
+#include "../Util/resource/Result.h"
+#include "../Util/resource/Resource.h"
 
 
 using namespace std;
@@ -14,7 +15,11 @@ using namespace std;
 
 ServidorConfig::ServidorConfig() {}
 
-ServidorConfig::~ServidorConfig() {}
+ServidorConfig::~ServidorConfig() {
+    if(threadx != nullptr){
+        delete threadx;
+    }
+}
 
 
 void ServidorConfig::lerConfiguracoesLocais(){
@@ -29,7 +34,6 @@ void ServidorConfig::lerConfiguracoesLocais(){
         setIntervaloLeituraConfiguracoes(configFile.getInt("intervaloLeituraConfiguracoes"));
         setIntervaloLeituraConfiguracoesDb(configFile.getInt("intervaloLeituraConfiguracoesDb"));
         setIntervaloCpu(configFile.getInt("intervaloCpu"));
-        setIntervaloDB(configFile.getInt("intervaloDB"));
         setIntervaloMemoria(configFile.getInt("intervaloMemoria"));
         setIntervaloSwap(configFile.getInt("intervaloSwap"));
         setHostMonitoramento(configFile.getString("hostMonitoramento"));
@@ -55,15 +59,12 @@ void ServidorConfig::salvarConfiguracoesLocais(){
         configFile.save("intervaloLeituraConfiguracoes", getIntervaloLeituraConfiguracoes());
         configFile.save("intervaloLeituraConfiguracoesDb", getIntervaloLeituraConfiguracoesDb());
         configFile.save("intervaloCpu", getIntervaloCpu());
-        configFile.save("intervaloDB", getIntervaloDB());
         configFile.save("intervaloMemoria", getIntervaloMemoria());
         configFile.save("intervaloSwap", getIntervaloSwap());
         configFile.save("hostMonitoramento", getHostMonitoramento());
         configFile.save("hostMonitoramento2", getHostMonitoramento2());
         configFile.save("porta", getPorta());
         configFile.save("porta2", getPorta2());
-
-
 
         configFile.commit();
         SystemLog::execLog('l',"ServidorConfig: Arquivo de configurações locais atualizados com API.");
@@ -80,8 +81,8 @@ void ServidorConfig::sincronizarConfigLocalComApi(ServidorConfig *srvConfig){
     Result *result;
     do{
         string path = "/servidor/"+ to_string(srvConfig->getServidor().getId()) +"/servidorconfiguracoes/"+to_string(srvConfig->getId());
-        Get get(path, srvConfig->getHostMonitoramento(), srvConfig->getPorta());
-        result = get.exec();
+        Resource  resource(path, srvConfig->getHostMonitoramento(), srvConfig->getPorta());
+        result = resource.get();
         if(result->getStatus() == 200){
             srvConfig->fromJson(result->getResult());
             srvConfig->salvarConfiguracoesLocais();
@@ -90,14 +91,13 @@ void ServidorConfig::sincronizarConfigLocalComApi(ServidorConfig *srvConfig){
         delete result;
         sleep(srvConfig->getIntervaloLeituraConfiguracoes());
     }
-    while(true);
+    while(srvConfig->isFicarMonitorando());
 
 };
 
 void ServidorConfig::threadSincronizarConfigLocalComApi(ServidorConfig *srvConfig){
     SystemLog::execLog('l',"ServidorConfig: Iniciando Thread Sincronizar Config local com API");
-    std::thread threadx(sincronizarConfigLocalComApi, srvConfig);
-    threadx.detach();
+    threadx = new std::thread(sincronizarConfigLocalComApi, srvConfig);
 };
 
 std::string ServidorConfig::toJson(){
@@ -109,7 +109,6 @@ std::string ServidorConfig::toJson(){
     pt.put ("intervaloCpu", getIntervaloCpu());
     pt.put ("intervaloMemoria", getIntervaloMemoria());
     pt.put ("intervaloSwap", getIntervaloSwap());
-    pt.put ("intervaloDB", getIntervaloDB());
     pt.put ("hostMonitoramento", getHostMonitoramento());
     pt.put ("hostMonitoramento2", getHostMonitoramento2());
     pt.put ("porta", getPorta());
@@ -133,7 +132,6 @@ bool ServidorConfig::fromJson(const std::string &json){
     setIntervaloCpu(pt2.get<long> ("intervaloCpu"));
     setIntervaloMemoria(pt2.get<long> ("intervaloMemoria"));
     setIntervaloSwap(pt2.get<long> ("intervaloSwap"));
-    setIntervaloDB(pt2.get<long> ("intervaloDB"));
     setHostMonitoramento(pt2.get<string> ("hostMonitoramento"));
     setHostMonitoramento2(pt2.get<string> ("hostMonitoramento2"));
     setPorta(pt2.get<long> ("porta"));
@@ -151,7 +149,6 @@ void ServidorConfig::print() {
     cout << "Intervalo cpu: " << getIntervaloCpu() << endl;
     cout << "Intervalo memoria: " << getIntervaloMemoria() << endl;
     cout << "Intervalo swap: " << getIntervaloSwap() << endl;
-    cout << "Intervalo DB: " << getIntervaloDB() << endl;
     cout << "Host Monitoramento: " << getHostMonitoramento() << endl;
     cout << "Host Monitoramento2: " << getHostMonitoramento2() << endl;
     cout << "porta: " << getPorta() << endl;

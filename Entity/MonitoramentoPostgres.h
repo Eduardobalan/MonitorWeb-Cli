@@ -16,7 +16,7 @@ private:
     string tipoExecucao;
     int exito;
     string mensagem;
-    std::thread *thread;
+    std::thread *threadx;
     string threadId;
 
 public:
@@ -32,14 +32,6 @@ public:
 
     string toJson();
 
-
-//    static bool fromJson(const string &json, ServidorConfigDb *srvConfigDb);
-//
-//    static void monitorarMonitoramentoPostgres(ServidorConfig *srvConfig, servidorConfigDb *informacoesMemoria, MonitoramentoMemoria *monitoramentoMemoria);
-//
-//    void threadMonitorarMonitoramentoPostgres(ServidorConfig *srvConfig, servidorConfigDb *informacoesMemoria, MonitoramentoMemoria *monitoramentoMemoria);
-
-
     //Getter and Setter
 
     const string &getTipoExecucao() const {
@@ -49,8 +41,6 @@ public:
     void setTipoExecucao(const string &tipoExecucao) {
         MonitoramentoPostgres::tipoExecucao = tipoExecucao;
     }
-
-
 
     int getExito() const {
         return exito;
@@ -75,6 +65,23 @@ public:
     void setServidorConfigDb(ServidorConfigDb *servidorConfigDb) {
         MonitoramentoPostgres::servidorConfigDb = servidorConfigDb;
     }
+
+    thread *getThreadx() const {
+        return threadx;
+    }
+
+    void setThreadx(thread *threadx) {
+        MonitoramentoPostgres::threadx = threadx;
+    }
+
+    const string &getThreadId() const {
+        return threadId;
+    }
+
+    void setThreadId(const string &threadId) {
+        MonitoramentoPostgres::threadId = threadId;
+    }
+
 };
 
 

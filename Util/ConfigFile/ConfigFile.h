@@ -25,6 +25,7 @@
 #include <string.h>
 #include <iostream>
 #include <map>
+#include <vector>
 #include "Exceptions.h"
 #include "../SystemLog.h"
 
@@ -35,8 +36,9 @@ private:
 
     std::string filePath;
     std::string symbol;
-    std::map<const std::string, std::string> configMap;
+    std::map<const std::string, std::vector<std::string>> configMap;
     bool loaded;
+    bool duplicable;
 
     inline bool containsInvalidChar(const std::string &property) {
         return property.find(symbol.c_str()) != std::string::npos;
@@ -71,7 +73,11 @@ private:
             InvalidPropertyName ex(property);
             throw ex;
         }
-        configMap[property] = static_cast<const std::string>(value == 0 ? "false" : "true");
+        unsigned long index = duplicable && configMap.find(property) != configMap.end()
+                              ? configMap[property].size() : 0;
+
+        std::vector<std::string> &v = configMap[property];
+        v.insert(v.begin() + index, static_cast<const std::string>(value == 0 ? "false" : "true"));
     }
 
     template<typename T>
@@ -80,17 +86,25 @@ private:
             InvalidPropertyName ex(property);
             throw ex;
         }
-        configMap[property] = std::to_string(value);
+        unsigned long index = duplicable && configMap.find(property) != configMap.end()
+                              ? configMap[property].size() : 0;
+
+        std::vector<std::string> &v = configMap[property];
+        v.insert(v.begin() + index, std::to_string(value));
     }
 
-    template<typename T>
-    inline void saveCharOrString(const std::string &property, const T value) {
+    template<typename T, typename std::enable_if<std::is_base_of<std::string, T>::value>::type * = nullptr>
+    inline void saveString(const std::string &property, const T &value) {
         if (containsInvalidChar(property)) {
             InvalidPropertyName ex(property);
             throw ex;
         }
-        configMap[property] = value;
-    }
+        unsigned long index = duplicable && configMap.find(property) != configMap.end()
+                              ? configMap[property].size() : 0;
+
+        std::vector<std::string> &v = configMap[property];
+        v.insert(v.begin() + index, value);
+    };
 
 public:
 
@@ -99,8 +113,8 @@ public:
      *
      * @param filePath
 	 */
-    ConfigFile(const std::string &filePath, const std::string &symbol = "=")
-            : filePath(filePath), symbol(symbol), loaded(false) {}
+    ConfigFile(const std::string &filePath, const std::string &symbol = "=", const bool duplicable = false)
+            : filePath(filePath), symbol(symbol), duplicable(duplicable), loaded(false) {}
 
     /**
 	 * Creates a copy of the ConfigFile object.
@@ -108,7 +122,8 @@ public:
      * @param orig
 	 */
     ConfigFile(const ConfigFile &orig)
-            : filePath(orig.filePath), symbol(orig.symbol), configMap(orig.configMap), loaded(orig.loaded) {}
+            : filePath(orig.filePath), symbol(orig.symbol), duplicable(orig.duplicable), configMap(orig.configMap),
+              loaded(orig.loaded) {}
 
     /**
 	 * Destroys this object.
@@ -133,13 +148,14 @@ public:
     }
 
     const char *getPropertyValue(const std::string &property) {
-        std::map<const std::string, std::string>::iterator it = configMap.find(property);
-        return it == configMap.end() ? nullptr : it->second.c_str();
+        std::map<const std::string, std::vector<std::string>>::iterator it = configMap.find(property);
+        return it == configMap.end() ? nullptr : it->second[0].c_str();
     }
 
     inline const char *loadValueFromFile(const std::string &property) {
         if (!loaded) {
             FileNotLoadedException ex(filePath);
+            SystemLog::execLog('w', "ConfigFile Exception: " + filePath + ".");
             throw ex;
         }
 
@@ -147,7 +163,8 @@ public:
 
         if (value == nullptr) {
             value = "";
-            SystemLog::execLog('w',"ConfigFile: property '"+property+"' não encontrada no arquivo ou linha comentada.");
+            SystemLog::execLog('w',
+                               "ConfigFile: property '" + property + "' não encontrada no arquivo ou linha comentada.");
 //            PropertyNotFoundException ex(property);
 //            throw ex;
         }
@@ -227,22 +244,9 @@ public:
         return loadValueFromFile(property);
     }
 
-//    void load(const std::string &property, bool &value);
-//    void load(const std::string &property, short &value);
-//    void load(const std::string &property, unsigned short &value);
-//    void load(const std::string &property, int &value);
-//    void load(const std::string &property, unsigned int &value);
-//    void load(const std::string &property, long &value);
-//    void load(const std::string &property, unsigned long &value);
-//    void load(const std::string &property, long long &value);
-//    void load(const std::string &property, unsigned long long &value);
-//    void load(const std::string &property, float &value);
-//    void load(const std::string &property, double &value);
-//    void load(const std::string &property, long double &value);
-//    void load(const std::string &property, char &value);
-//    void load(const std::string &property, unsigned char &value);
-//    void load(const std::string &property, const char *value);
-//    void load(const std::string &property, std::string &value);
+    const vector<std::string> &getVector(const std::string &property) {
+        return configMap[property];
+    }
 
     void save(const std::string &property, const bool value) { saveBool(property, value); }
 
@@ -268,11 +272,7 @@ public:
 
     void save(const std::string &property, const long double value) { saveNumber(property, value); }
 
-    void save(const std::string &property, const char value) { saveCharOrString(property, value); }
-
-    void save(const std::string &property, const unsigned char value) { saveCharOrString(property, value); }
-
-    void save(const std::string &property, const std::string &value) { saveCharOrString(property, value); }
+    void save(const std::string &property, const std::string &value) { saveString(property, value); }
 };
 
 

@@ -12,7 +12,12 @@
 
 class ThreadLerServidorConfigInformacoesDb {
 private:
+    thread *threadx;
 public:
+    ThreadLerServidorConfigInformacoesDb();
+
+    virtual ~ThreadLerServidorConfigInformacoesDb();
+
     void lerConfiguracoesLocais();
 
     void salvarConfiguracoesLocais();
@@ -22,6 +27,14 @@ public:
     static void sincronizarConfigLocalComApi(ServidorConfig *srvConfig, std::map<long, MonitoramentoPostgresInformacoes*>  *mapMonitoramentoPostgresInformacoes);
 
     void threadSincronizarConfigLocalComApi(ServidorConfig *srvConfig, std::map<long, MonitoramentoPostgresInformacoes*> *mapMonitoramentoPostgresInformacoes);
+
+    thread *getThreadx() const {
+        return threadx;
+    }
+
+    void setThreadx(thread *threadx) {
+        ThreadLerServidorConfigInformacoesDb::threadx = threadx;
+    }
 };
 
 

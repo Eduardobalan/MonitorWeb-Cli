@@ -5,7 +5,7 @@
 #include <boost/algorithm/string.hpp>
 #include "InformacoesSwap.h"
 #include "../Util/ConfigFile/ConfigFile.h"
-#include "../Util/verbosHttp/Post.h"
+#include "../Util/resource/Resource.h"
 
 InformacoesSwap::InformacoesSwap() {}
 
@@ -44,11 +44,11 @@ void InformacoesSwap::monitorarInformacoesSwap(ServidorConfig *srvConfig){
 
         string path = "/servidor/"+ to_string(srvConfig->getServidor().getId()) +"/informacoesswap/";
 
-        Post post(path, srvConfig->getHostMonitoramento(), srvConfig->getPorta());
+        Resource resource(path, srvConfig->getHostMonitoramento(), srvConfig->getPorta());
 
         lerInformacoesSwap();
 
-        result = post.exec(toJson());
+        result = resource.post(toJson());
         if(result->getStatus() == 200){
             fromJson(result->getResult());
         }

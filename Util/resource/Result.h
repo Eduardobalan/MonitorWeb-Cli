@@ -13,6 +13,7 @@ class Result {
 
 private:
     unsigned short status;
+    string verbo;
     string result;
     string error;
     string host;
@@ -21,7 +22,7 @@ private:
     string json;
 
 public:
-    Result(unsigned short status, const string &result, const string &error, const string &path, const string &host, unsigned short port, const string json);
+    Result(unsigned short status, const string &result, const string &error,const string &verbo, const string &path, const string &host, unsigned short port, const string json);
 
     void imprimir(const string &origem);
 
@@ -80,6 +81,22 @@ public:
     }
 
     void setjson(const string &json) {
+        Result::json = json;
+    }
+
+    const string &getVerbo() const {
+        return verbo;
+    }
+
+    void setVerbo(const string &verbo) {
+        Result::verbo = verbo;
+    }
+
+    const string &getJson() const {
+        return json;
+    }
+
+    void setJson(const string &json) {
         Result::json = json;
     }
 };

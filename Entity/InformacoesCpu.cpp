@@ -4,6 +4,8 @@
 
 #include "InformacoesCpu.h"
 #include "../Util/ConfigFile/ConfigFile.h"
+#include "../Util/resource/Result.h"
+#include "../Util/resource/Resource.h"
 #include <boost/algorithm/string.hpp>
 
 using namespace std;
@@ -53,11 +55,11 @@ void InformacoesCpu::monitorarInformacoesCpu(ServidorConfig *srvConfig){
 
         string path = "/servidor/"+ to_string(srvConfig->getServidor().getId()) +"/informacoescpu/";
 
-        Post post(path, srvConfig->getHostMonitoramento(), srvConfig->getPorta());
+        Resource resource(path, srvConfig->getHostMonitoramento(), srvConfig->getPorta());
 
         lerInformacoesCpu();
 
-        result = post.exec(toJson());
+        result = resource.post(toJson());
         if(result->getStatus() == 200){
             fromJson(result->getResult());
         }

@@ -10,6 +10,7 @@
 
 class MonitoramentoMemoria {
 private:
+    thread *threadx;
     InformacoesMemoria *informacoesMemoria;
     long active;
     long memfree;
@@ -71,6 +72,14 @@ public:
 
     void setBuffers(long buffers) {
         MonitoramentoMemoria::buffers = buffers;
+    }
+
+    thread *getThreadx() const {
+        return threadx;
+    }
+
+    void setThreadx(thread *threadx) {
+        MonitoramentoMemoria::threadx = threadx;
     }
 };
 

@@ -27,7 +27,6 @@ int main(int argc, char* argv[]) {
 
     SystemLog::lerLogConf();
 
-
     //############################
     //# Configurações do sistema #
     //############################
@@ -36,10 +35,9 @@ int main(int argc, char* argv[]) {
     srvConfig.lerConfiguracoesLocais();
     srvConfig.threadSincronizarConfigLocalComApi(&srvConfig);
 
-    sleep(3);
-//    //############################
-//    //# Informacoes  do  sistema #
-//    //############################
+    //############################
+    //# Informacoes  do  sistema #
+    //############################
 
     InformacoesCpu informacoesCpu;
     informacoesCpu.monitorarInformacoesCpu(&srvConfig);
@@ -71,8 +69,8 @@ int main(int argc, char* argv[]) {
 //    //############################
 
     std::map<long, MonitoramentoPostgresInformacoes*> mapMonitoramentoPostgresInformacoes;
-    ThreadLerServidorConfigInformacoesDb  ThreadLerServidorConfigInformacoesDb;
-    ThreadLerServidorConfigInformacoesDb.threadSincronizarConfigLocalComApi(&srvConfig, &mapMonitoramentoPostgresInformacoes);
+    ThreadLerServidorConfigInformacoesDb  threadLerServidorConfigInformacoesDb;
+    threadLerServidorConfigInformacoesDb.threadSincronizarConfigLocalComApi(&srvConfig, &mapMonitoramentoPostgresInformacoes);
 
     std::map<long, MonitoramentoPostgres*> mapMonitoramentoPostgres;
     ThreadLerServidorConfigDb threadLerServidorConfigDb;
@@ -80,5 +78,25 @@ int main(int argc, char* argv[]) {
 
     do{
         sleep(1000000000);
-    }while(true);
+    }while(srvConfig.isFicarMonitorando());
+
+//    //############################
+//    //# Liberar as threads       #
+//    //############################
+
+    srvConfig.setFicarMonitorando(false);
+
+    threadLerServidorConfigDb.getThreadx()->join();
+
+    threadLerServidorConfigInformacoesDb.getThreadx()->join();
+
+    monitoramentoSwap.getThreadx()->join();
+
+    monitoramentoCpu.getThreadx()->join();
+
+    monitoramentoMemoria.getThreadx()->join();
+
+    srvConfig.getThreadx()->join();
+
+    return 0;
 }

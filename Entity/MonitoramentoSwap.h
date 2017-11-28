@@ -10,6 +10,7 @@
 
 class MonitoramentoSwap {
 private:
+    thread *threadx;
     InformacoesSwap *informacoesSwap;
     long free;
     long cached;
@@ -53,6 +54,14 @@ public:
 
     void setCached(long cached) {
         MonitoramentoSwap::cached = cached;
+    }
+
+    thread *getThreadx() const {
+        return threadx;
+    }
+
+    void setThreadx(thread *threadx) {
+        MonitoramentoSwap::threadx = threadx;
     }
 };
 

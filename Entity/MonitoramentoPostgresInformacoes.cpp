@@ -4,8 +4,8 @@
 
 #include "MonitoramentoPostgresInformacoes.h"
 #include "../Util/ConfigFile/ConfigFile.h"
-#include "../Util/verbosHttp/Post.h"
 #include "ServidorConfigDb.h"
+#include "../Util/resource/Resource.h"
 
 
 MonitoramentoPostgresInformacoes::MonitoramentoPostgresInformacoes() {
@@ -15,6 +15,9 @@ MonitoramentoPostgresInformacoes::MonitoramentoPostgresInformacoes() {
 MonitoramentoPostgresInformacoes::~MonitoramentoPostgresInformacoes() {
     if(servidorConfigInformacoesDb != nullptr){
         delete servidorConfigInformacoesDb;
+    }
+    if(threadx != nullptr){
+        delete threadx;
     }
 };
 
@@ -41,7 +44,7 @@ void MonitoramentoPostgresInformacoes::lerMonitoramentoPostgresInformacoes(Servi
         setMaxPreparedTransactions(configFile.getString("max_prepared_transactions"));
 
 
-        delete path;
+        delete[] path;
     } catch (FileNotFoundException &ex) {
         std::cerr << ex.what() << std::endl;
     } catch (InvalidPropertyName &ex) {
@@ -56,11 +59,11 @@ void MonitoramentoPostgresInformacoes::sincronizarConfigLocalComApi(ServidorConf
         sleep(servidorConfigInformacoesDb->getIntervaloExec());
         if(monitoramentoPostgresInformacoes->getServidorConfigInformacoesDb()->isAtivo()) {
             string path = "/servidor/informacoes/"+to_string(monitoramentoPostgresInformacoes->getServidorConfigInformacoesDb()->getId())+"/monitoramentopostgresinformacoes";
-            Post post(path, srvConfig->getHostMonitoramento(), srvConfig->getPorta());
+            Resource resource(path, srvConfig->getHostMonitoramento(), srvConfig->getPorta());
 
             monitoramentoPostgresInformacoes->lerMonitoramentoPostgresInformacoes(servidorConfigInformacoesDb);
 
-            result = post.exec(monitoramentoPostgresInformacoes->toJson());
+            result = resource.post(monitoramentoPostgresInformacoes->toJson());
 
             result->imprimir("MonitoramentoPostgresInformacoes{"+ monitoramentoPostgresInformacoes->threadId +"}");
 
@@ -69,20 +72,18 @@ void MonitoramentoPostgresInformacoes::sincronizarConfigLocalComApi(ServidorConf
             SystemLog::execLog('w',"MonitoramentoPostgresInformacoes{" + monitoramentoPostgresInformacoes->threadId + "}: Registro de informacoes esta desativado.");
         }
     }
-    while(true);
+    while(srvConfig->isFicarMonitorando());
 };
 
 void MonitoramentoPostgresInformacoes::threadSincronizarConfigLocalComApi(ServidorConfig *srvConfig, ServidorConfigInformacoesDb *servidorConfigInformacoesDb, MonitoramentoPostgresInformacoes *monitoramentoPostgresInformacoes){
     SystemLog::execLog('l',"MonitoramentoPostgresInformacoes: Iniciando uma Thread de Sincronizar local com API");
-    thread = new std::thread(sincronizarConfigLocalComApi, srvConfig, servidorConfigInformacoesDb, monitoramentoPostgresInformacoes);
+    threadx = new std::thread(sincronizarConfigLocalComApi, srvConfig, servidorConfigInformacoesDb, monitoramentoPostgresInformacoes);
 
     //Salva o id da thread no MonitoramentoPostgresInformacoes.
-    auto myid = thread->get_id();
+    auto myid = threadx->get_id();
     stringstream ss;
     ss << myid;
     threadId = ss.str();
-
-    thread->detach();
 };
 
 string MonitoramentoPostgresInformacoes::toJson(){

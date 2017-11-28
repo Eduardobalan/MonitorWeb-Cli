@@ -15,7 +15,7 @@ class MonitoramentoPostgresInformacoes {
 private:
     long Id;
     ServidorConfigInformacoesDb *servidorConfigInformacoesDb;
-    std::thread *thread;
+    std::thread *threadx;
     string threadId;
     string listenAddresses;
     string port;
@@ -149,6 +149,22 @@ public:
 
     void setMaxPreparedTransactions(const string &maxPreparedTransactions) {
         MonitoramentoPostgresInformacoes::maxPreparedTransactions = maxPreparedTransactions;
+    }
+
+    thread *getThreadx() const {
+        return threadx;
+    }
+
+    void setThreadx(thread *threadx) {
+        MonitoramentoPostgresInformacoes::threadx = threadx;
+    }
+
+    const string &getThreadId() const {
+        return threadId;
+    }
+
+    void setThreadId(const string &threadId) {
+        MonitoramentoPostgresInformacoes::threadId = threadId;
     }
 };
 

@@ -5,7 +5,7 @@
 #include <boost/algorithm/string.hpp>
 #include "InformacoesMemoria.h"
 #include "../Util/ConfigFile/ConfigFile.h"
-#include "../Util/verbosHttp/Post.h"
+#include "../Util/resource/Resource.h"
 
 InformacoesMemoria::InformacoesMemoria() {}
 
@@ -45,11 +45,11 @@ void InformacoesMemoria::monitorarInformacoesMemoria(ServidorConfig *srvConfig){
 
         string path = "/servidor/"+ to_string(srvConfig->getServidor().getId()) +"/informacoesmemoria/";
 
-        Post post(path, srvConfig->getHostMonitoramento(), srvConfig->getPorta());
+        Resource resource(path, srvConfig->getHostMonitoramento(), srvConfig->getPorta());
 
         lerInformacoesMemoria();
 
-        result = post.exec(toJson());
+        result = resource.post(toJson());
         if(result->getStatus() == 200){
             fromJson(result->getResult());
         }

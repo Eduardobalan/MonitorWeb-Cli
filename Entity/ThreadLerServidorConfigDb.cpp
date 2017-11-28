@@ -4,10 +4,16 @@
 
 #include <thread>
 #include "ThreadLerServidorConfigDb.h"
-#include "../Util/verbosHttp/Result.h"
-#include "../Util/verbosHttp/Get.h"
 #include "../Util/SystemLog.h"
+#include "../Util/resource/Resource.h"
 
+ThreadLerServidorConfigDb::ThreadLerServidorConfigDb() {}
+
+ThreadLerServidorConfigDb::~ThreadLerServidorConfigDb() {
+    if(threadx != nullptr){
+        delete threadx;
+    }
+}
 
 bool ThreadLerServidorConfigDb::fromJson(const std::string &json, ServidorConfig *srvConfig, std::map<long, MonitoramentoPostgres*>  *mapMonitoramentoPostgres){
     ptree pt2;
@@ -76,8 +82,8 @@ void ThreadLerServidorConfigDb::sincronizarConfigLocalComApi(ServidorConfig *srv
     ServidorConfigDb servidorConfigDb;
     do{
         string path = "/servidor/"+ to_string(srvConfig->getServidor().getId()) +"/servidorconfiguracoesdb/";
-        Get get(path, srvConfig->getHostMonitoramento(), srvConfig->getPorta());
-        result = get.exec();
+        Resource resource(path, srvConfig->getHostMonitoramento(), srvConfig->getPorta());
+        result = resource.get();
         if(result->getStatus() == 200){
             fromJson(result->getResult(), srvConfig, mapMonitoramentoPostgres);
         }
@@ -85,12 +91,21 @@ void ThreadLerServidorConfigDb::sincronizarConfigLocalComApi(ServidorConfig *srv
         delete result;
         sleep(srvConfig->getIntervaloLeituraConfiguracoesDb());
     }
-    while(true);
+    while(srvConfig->isFicarMonitorando());
 
+    // finaliza as threads
+    std::map<long, MonitoramentoPostgres*>::iterator it =  mapMonitoramentoPostgres->begin();
+    while(it != mapMonitoramentoPostgres->end()){
+        if(it->second->getThreadx() != nullptr){
+            it->second->getThreadx()->join();
+            delete mapMonitoramentoPostgres->at(it->first);
+        }
+        it ++;
+    }
+    mapMonitoramentoPostgres->clear();
 };
 
 void ThreadLerServidorConfigDb::threadSincronizarConfigLocalComApi(ServidorConfig *srvConfig, std::map<long, MonitoramentoPostgres*> *mapMonitoramentoPostgres){
     SystemLog::execLog('l',"ThreadLerServidorConfigDb: Iniciando Thread");
-    std::thread threadx(sincronizarConfigLocalComApi, srvConfig, mapMonitoramentoPostgres);
-    threadx.detach();
+    threadx = new std::thread(sincronizarConfigLocalComApi, srvConfig, mapMonitoramentoPostgres);
 }

@@ -12,13 +12,13 @@ using namespace std;
 
 class SystemLog {
 private:
-    static bool mostrarLogLog;
-    static bool mostrarLogWarming;
-    static bool mostrarLogErro;
-    static bool ativarLog;
-    static bool ativarLogArquivo;
+    static bool ativarEmTelaInfo;
+    static bool ativarEmTelaWarming;
+    static bool ativarEmTelaErro;
+    static bool ativarEmArquivoInfo;
+    static bool ativarEmArquivoWarming;
+    static bool ativarEmArquivoErro;
 public:
-
 
     static void lerLogConf();
 
@@ -26,44 +26,52 @@ public:
 
     // ------ Getter end Setter
 
-    static bool isMostrarLogLog() {
-        return mostrarLogLog;
+    static bool isAtivarEmTelaInfo() {
+        return ativarEmTelaInfo;
     }
 
-    static void setMostrarLogLog(bool mostrarLogLog) {
-        SystemLog::mostrarLogLog = mostrarLogLog;
+    static void setAtivarEmTelaInfo(bool ativarEmTelaInfo) {
+        SystemLog::ativarEmTelaInfo = ativarEmTelaInfo;
     }
 
-    static bool isMostrarLogWarming() {
-        return mostrarLogWarming;
+    static bool isAtivarEmArquivoInfo() {
+        return ativarEmArquivoInfo;
     }
 
-    static void setMostrarLogWarming(bool mostrarLogWarming) {
-        SystemLog::mostrarLogWarming = mostrarLogWarming;
+    static void setAtivarEmArquivoInfo(bool ativarEmArquivoInfo) {
+        SystemLog::ativarEmArquivoInfo = ativarEmArquivoInfo;
     }
 
-    static bool isMostrarLogErro() {
-        return mostrarLogErro;
+    static bool isAtivarEmTelaWarming() {
+        return ativarEmTelaWarming;
     }
 
-    static void setMostrarLogErro(bool mostrarLogErro) {
-        SystemLog::mostrarLogErro = mostrarLogErro;
+    static void setAtivarEmTelaWarming(bool ativarEmTelaWarming) {
+        SystemLog::ativarEmTelaWarming = ativarEmTelaWarming;
     }
 
-    static bool isAtivarLogArquivo() {
-        return ativarLogArquivo;
+    static bool isAtivarEmTelaErro() {
+        return ativarEmTelaErro;
     }
 
-    static void setAtivarLogArquivo(bool ativarLogArquivo) {
-        SystemLog::ativarLogArquivo = ativarLogArquivo;
+    static void setAtivarEmTelaErro(bool ativarEmTelaErro) {
+        SystemLog::ativarEmTelaErro = ativarEmTelaErro;
     }
 
-    static bool isAtivarLog() {
-        return ativarLog;
+    static bool isAtivarEmArquivoWarming() {
+        return ativarEmArquivoWarming;
     }
 
-    static bool setAtivarLog(bool ativarLog) {
-        SystemLog::ativarLog = ativarLog;
+    static void setAtivarEmArquivoWarming(bool ativarEmArquivoWarming) {
+        SystemLog::ativarEmArquivoWarming = ativarEmArquivoWarming;
+    }
+
+    static bool isAtivarEmArquivoErro() {
+        return ativarEmArquivoErro;
+    }
+
+    static void setAtivarEmArquivoErro(bool ativarEmArquivoErro) {
+        SystemLog::ativarEmArquivoErro = ativarEmArquivoErro;
     }
 };
 

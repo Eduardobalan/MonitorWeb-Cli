@@ -4,6 +4,12 @@
 
 #include "SystemData.h"
 
+SystemData::~SystemData() {
+
+}
+
+SystemData::SystemData() {}
+
 struct tm* SystemData::horarioLocal(){
     time_t timer;
     time(&timer); // Obtem informações de data e hora
@@ -20,7 +26,11 @@ string SystemData::data() {
 string SystemData::hora() {
     struct tm *hl = SystemData::horarioLocal();
 
-    return  to_string(hl->tm_hour)+ ":" + to_string(hl->tm_min) + ":" + to_string(hl->tm_sec) ;
+    string hour = hl->tm_hour >= 10 ? to_string(hl->tm_hour) : "0"+to_string(hl->tm_hour) ;
+    string min  = hl->tm_min  >= 10 ? to_string(hl->tm_min)  : "0"+to_string(hl->tm_min) ;
+    string sec  = hl->tm_sec  >= 10 ? to_string(hl->tm_sec)  : "0"+to_string(hl->tm_sec) ;
+
+    return  hour+ ":" + min + ":" + sec;
 }
 
 string SystemData::dataHora() {
@@ -30,9 +40,3 @@ string SystemData::dataHora() {
 string SystemData::horaData() {
     return hora()+"-"+data();
 }
-
-SystemData::~SystemData() {
-
-}
-
-SystemData::SystemData() {}

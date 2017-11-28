@@ -24,6 +24,10 @@ class MonitoramentoCpu {
 
 private:
     InformacoesCpu *informacoesCpu;
+    thread *threadx;
+    //variavel que representa o numero do nucleo que esta sendo monitorado no momento.
+    long numeroNucleoMonitorado = 0;
+    long coreId;
     long numeroNucleos;
     long cpuMhz;
 
@@ -68,6 +72,30 @@ public:
 
     void setCpuMhz(long cpuMhz) {
         MonitoramentoCpu::cpuMhz = cpuMhz;
+    }
+
+    long getCoreId() const {
+        return coreId;
+    }
+
+    void setCoreId(long coreId) {
+        MonitoramentoCpu::coreId = coreId;
+    }
+
+    thread *getThreadx() const {
+        return threadx;
+    }
+
+    void setThreadx(thread *threadx) {
+        MonitoramentoCpu::threadx = threadx;
+    }
+
+    long getNumeroNucleoMonitorado() const {
+        return numeroNucleoMonitorado;
+    }
+
+    void setNumeroNucleoMonitorado(long numeroNucleoMonitorado) {
+        MonitoramentoCpu::numeroNucleoMonitorado = numeroNucleoMonitorado;
     }
 };
 
