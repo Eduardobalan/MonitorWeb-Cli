@@ -6,14 +6,15 @@
 #include <thread>
 #include "MonitoramentoSwap.h"
 #include "../Util/ConfigFile/ConfigFile.h"
-#include "../Util/SystemLog.h"
-#include "../Util/verbosHttp/Result.h"
-#include "../Util/verbosHttp/Post.h"
+#include "../Util/resource/Resource.h"
+
 
 MonitoramentoSwap::MonitoramentoSwap() {}
 
 MonitoramentoSwap::~MonitoramentoSwap() {
-
+    if(threadx != nullptr){
+        delete threadx;
+    }
 }
 
 void MonitoramentoSwap::lerMonitorarSwap(){
@@ -22,7 +23,6 @@ void MonitoramentoSwap::lerMonitorarSwap(){
         chdir("/proc/");
         ConfigFile configFile("meminfo", ":");
         configFile.load();
-        SystemLog::execLog('l',"MonitoramentoSwap: Lendo arquivo de locais.");
 
 
         string SwapFree =  configFile.getString("SwapFree");
@@ -47,32 +47,27 @@ void MonitoramentoSwap::monitorarMonitoramentoSwap(ServidorConfig *srvConfig, In
     monitoramentoSwap->setInformacoesSwap(informacoesSwap);
     do{
         string path = "/servidor/informacoes/"+to_string(informacoesSwap->getId())+"/monitoramentoswap";
-        Post post(path, srvConfig->getHostMonitoramento(), srvConfig->getPorta());
+        Resource resource(path, srvConfig->getHostMonitoramento(), srvConfig->getPorta());
+
         monitoramentoSwap->lerMonitorarSwap();
 
-        result = post.exec(monitoramentoSwap->toJson());
-        if(result->getStatus() == 200){
-            //monitoramentoCpu->fromJson(result->getResult());
-            SystemLog::execLog('l',"MonitoramentoSwap: "+srvConfig->getHostMonitoramento()+":"+to_string(srvConfig->getPorta())+ path);
-        }else{
-            SystemLog::execLog('e',"MonitoramentoSwap: Status:"+result->getResult() +" erro:"+ result->getError());
-            SystemLog::execLog('e',"json: "+monitoramentoSwap->toJson());
+        result = resource.post(monitoramentoSwap->toJson());
 
-        }
+        result->imprimir("MonitoramentoSwap");
+
+        delete result;
+
         sleep(srvConfig->getIntervaloSwap());
     }
-    while(true);
+    while(srvConfig->isFicarMonitorando());
 };
 
 void MonitoramentoSwap::threadMonitorarMonitoramentoSwap(ServidorConfig *srvConfig, InformacoesSwap *informacoesSwap, MonitoramentoSwap *monitoramentoSwap){
     SystemLog::execLog('l',"MonitoramentoSwap: Iniciando Thread");
-    std::thread threadx(monitorarMonitoramentoSwap, srvConfig, informacoesSwap, monitoramentoSwap);
-    threadx.detach();
+    threadx = new std::thread(monitorarMonitoramentoSwap, srvConfig, informacoesSwap, monitoramentoSwap);
 };
 
 string MonitoramentoSwap::toJson(){
-    SystemLog::execLog('l',"MonitoramentoSwap: Tranformando Objeto em Json;");
-
     ptree pt;
     pt.put ("free", getFree());
     pt.put ("cached", getCached());
@@ -85,7 +80,6 @@ string MonitoramentoSwap::toJson(){
 };
 
 bool MonitoramentoSwap::fromJson(const std::string &json){
-    SystemLog::execLog('l',"MonitoramentoSwap: Trasformando o json em objeto");
     ptree pt2;
     std::istringstream is (json);
     read_json (is, pt2);

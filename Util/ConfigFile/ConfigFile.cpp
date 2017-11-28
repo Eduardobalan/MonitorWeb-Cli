@@ -34,6 +34,7 @@ std::string trim(const std::string &str) {
 }
 
 void ConfigFile::load() {
+    configMap.clear();
 
     ifstream file(filePath, ios::in);
     if (!file.good()) {
@@ -50,10 +51,17 @@ void ConfigFile::load() {
         if (pos != std::string::npos) {
             std::string property = trim(line.substr(0, pos));
             std::string value = trim(line.substr(pos + 1, line.size() - pos - 1));
-            //cout << "Adicionado: [" << property << "=" << value << "]" << endl;
-            save(property, value);
+//            if (duplicable && configMap.find(property) != configMap.end()) {
+//                //
+//                // int index = configMap[property].size();
+//                unsigned long index = configMap.find(property) != configMap.end()
+//                                      ? configMap[property].size() : 0;
+//
+//                configMap[property][index] = value;
+//            } else {
+                save(property, value);
+            //}
             loaded = true;
-            //cout << "ahsuahsuhas : " << getString(property) << endl;
         }
     }
     file.close();
@@ -67,7 +75,7 @@ void ConfigFile::commit() {
         throw ex;
     }
     for (auto const &x : configMap) {
-        file << x.first << symbol.c_str() << x.second << std::endl;
+        file << x.first << symbol.c_str() << x.second.at(0) << std::endl;
     }
     file.close();
 }

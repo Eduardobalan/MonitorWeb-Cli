@@ -6,13 +6,17 @@
 #define WEBMONITOR_CLIENTE_INFORMACOESDB_H
 
 
+#include <thread>
 #include "Servidor.h"
 #include "ServidorConfig.h"
+#include "ServidorConfigInformacoesDb.h"
 
-class InformacoesPostgres {
+class MonitoramentoPostgresInformacoes {
 private:
     long Id;
-    Servidor servidor;
+    ServidorConfigInformacoesDb *servidorConfigInformacoesDb;
+    std::thread *threadx;
+    string threadId;
     string listenAddresses;
     string port;
     string maxConnections;
@@ -28,13 +32,15 @@ private:
 
 public:
 
-    InformacoesPostgres();
+    MonitoramentoPostgresInformacoes();
 
-    virtual ~InformacoesPostgres();
+    virtual ~MonitoramentoPostgresInformacoes();
 
-    void lerInformacoesPostgres(ServidorConfig *srvConfig);
+    void lerMonitoramentoPostgresInformacoes(ServidorConfigInformacoesDb *srvConfig);
 
-    void monitorarInformacoesPostgres(ServidorConfig *srvConfig);
+    void threadSincronizarConfigLocalComApi(ServidorConfig *srvConfig, ServidorConfigInformacoesDb *servidorConfigInformacoesDb, MonitoramentoPostgresInformacoes *monitoramentoPostgresInformacoes);
+
+    static void sincronizarConfigLocalComApi(ServidorConfig *srvConfig, ServidorConfigInformacoesDb *servidorConfigInformacoesDb, MonitoramentoPostgresInformacoes *monitoramentoPostgresInformacoes);
 
     bool fromJson(const string &json);
 
@@ -46,15 +52,15 @@ public:
     }
 
     void setId(long Id) {
-        InformacoesPostgres::Id = Id;
+        MonitoramentoPostgresInformacoes::Id = Id;
     }
 
-    const Servidor &getServidor() const {
-        return servidor;
+    ServidorConfigInformacoesDb *getServidorConfigInformacoesDb() const {
+        return servidorConfigInformacoesDb;
     }
 
-    void setServidor(const Servidor &servidor) {
-        InformacoesPostgres::servidor = servidor;
+    void setServidorConfigInformacoesDb(ServidorConfigInformacoesDb *servidorConfigInformacoesDb) {
+        MonitoramentoPostgresInformacoes::servidorConfigInformacoesDb = servidorConfigInformacoesDb;
     }
 
     const string &getListenAddresses() const {
@@ -62,7 +68,7 @@ public:
     }
 
     void setListenAddresses(const string &listenAddresses) {
-        InformacoesPostgres::listenAddresses = listenAddresses;
+        MonitoramentoPostgresInformacoes::listenAddresses = listenAddresses;
     }
 
     const string &getPort() const {
@@ -70,7 +76,7 @@ public:
     }
 
     void setPort(const string &port) {
-        InformacoesPostgres::port = port;
+        MonitoramentoPostgresInformacoes::port = port;
     }
 
     const string &getMaxConnections() const {
@@ -78,7 +84,7 @@ public:
     }
 
     void setMaxConnections(const string &maxConnections) {
-        InformacoesPostgres::maxConnections = maxConnections;
+        MonitoramentoPostgresInformacoes::maxConnections = maxConnections;
     }
 
     const string &getSsl() const {
@@ -86,7 +92,7 @@ public:
     }
 
     void setSsl(const string &ssl) {
-        InformacoesPostgres::ssl = ssl;
+        MonitoramentoPostgresInformacoes::ssl = ssl;
     }
 
     const string &getSharedBuffers() const {
@@ -94,7 +100,7 @@ public:
     }
 
     void setSharedBuffers(const string &sharedBuffers) {
-        InformacoesPostgres::sharedBuffers = sharedBuffers;
+        MonitoramentoPostgresInformacoes::sharedBuffers = sharedBuffers;
     }
 
     const string &getTempBuffers() const {
@@ -102,7 +108,7 @@ public:
     }
 
     void setTempBuffers(const string &tempBuffers) {
-        InformacoesPostgres::tempBuffers = tempBuffers;
+        MonitoramentoPostgresInformacoes::tempBuffers = tempBuffers;
     }
 
     const string &getWorkMem() const {
@@ -110,7 +116,7 @@ public:
     }
 
     void setWorkMem(const string &workMem) {
-        InformacoesPostgres::workMem = workMem;
+        MonitoramentoPostgresInformacoes::workMem = workMem;
     }
 
     const string &getMaintenanceWorkMem() const {
@@ -118,7 +124,7 @@ public:
     }
 
     void setMaintenanceWorkMem(const string &maintenanceWorkMem) {
-        InformacoesPostgres::maintenanceWorkMem = maintenanceWorkMem;
+        MonitoramentoPostgresInformacoes::maintenanceWorkMem = maintenanceWorkMem;
     }
 
     const string &getReplacementWortTuples() const {
@@ -126,7 +132,7 @@ public:
     }
 
     void setReplacementWortTuples(const string &replacementWortTuples) {
-        InformacoesPostgres::replacementWortTuples = replacementWortTuples;
+        MonitoramentoPostgresInformacoes::replacementWortTuples = replacementWortTuples;
     }
 
     const string &getMaxStackDepth() const {
@@ -134,7 +140,7 @@ public:
     }
 
     void setMaxStackDepth(const string &maxStackDepth) {
-        InformacoesPostgres::maxStackDepth = maxStackDepth;
+        MonitoramentoPostgresInformacoes::maxStackDepth = maxStackDepth;
     }
 
     const string &getMaxPreparedTransactions() const {
@@ -142,7 +148,23 @@ public:
     }
 
     void setMaxPreparedTransactions(const string &maxPreparedTransactions) {
-        InformacoesPostgres::maxPreparedTransactions = maxPreparedTransactions;
+        MonitoramentoPostgresInformacoes::maxPreparedTransactions = maxPreparedTransactions;
+    }
+
+    thread *getThreadx() const {
+        return threadx;
+    }
+
+    void setThreadx(thread *threadx) {
+        MonitoramentoPostgresInformacoes::threadx = threadx;
+    }
+
+    const string &getThreadId() const {
+        return threadId;
+    }
+
+    void setThreadId(const string &threadId) {
+        MonitoramentoPostgresInformacoes::threadId = threadId;
     }
 };
 

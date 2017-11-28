@@ -6,6 +6,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include "Servidor.h"
+#include <thread>
 
 #ifndef WEBMONITOR_CLIENTE_SERVIDORCONFIG_H
 #define WEBMONITOR_CLIENTE_SERVIDORCONFIG_H
@@ -15,6 +16,7 @@ using boost::property_tree::read_json;
 using boost::property_tree::write_json;
 using std::string;
 using std::cout;
+using std::thread;
 
 using namespace std;
 
@@ -22,12 +24,13 @@ class ServidorConfig {
 private:
     long id;
     Servidor servidor;
+    thread *threadx;
+    bool ficarMonitorando = true;
     long intervaloLeituraConfiguracoes;
     long intervaloLeituraConfiguracoesDb;
     long intervaloCpu;
     long intervaloMemoria;
     long intervaloSwap;
-    long intervaloDB;
     string hostMonitoramento;
     string hostMonitoramento2;
     long porta;
@@ -94,14 +97,6 @@ public:
         ServidorConfig::intervaloSwap = intervaloSwap;
     }
 
-    long getIntervaloDB() const {
-        return intervaloDB;
-    }
-
-    void setIntervaloDB(long intervaloDB) {
-        ServidorConfig::intervaloDB = intervaloDB;
-    }
-
     const string &getHostMonitoramento() const {
         return hostMonitoramento;
     }
@@ -150,6 +145,21 @@ public:
         ServidorConfig::porta2 = porta2;
     }
 
+    thread *getThreadx() const {
+        return threadx;
+    }
+
+    void setThreadx(thread *threadx) {
+        ServidorConfig::threadx = threadx;
+    }
+
+    bool isFicarMonitorando() const {
+        return ficarMonitorando;
+    }
+
+    void setFicarMonitorando(bool ficarMonitorando) {
+        ServidorConfig::ficarMonitorando = ficarMonitorando;
+    }
 };
 
 

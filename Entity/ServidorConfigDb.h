@@ -33,6 +33,7 @@ private:
     long porta;
     string versao;
     long intervaloExec;
+    bool ativo;
 public:
     ServidorConfigDb() {  }
 
@@ -116,6 +117,14 @@ public:
 
     void setIntervaloExec(long intervaloExec) {
         ServidorConfigDb::intervaloExec = intervaloExec;
+    }
+
+    bool isAtivo() const {
+        return ativo;
+    }
+
+    void setAtivo(bool ativo) {
+        ServidorConfigDb::ativo = ativo;
     }
 };
 

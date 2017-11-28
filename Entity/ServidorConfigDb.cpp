@@ -6,7 +6,7 @@
 
 
 ServidorConfigDb::~ServidorConfigDb() {
-
+    cout << "---------------------------- Destrutor ~dServidorConfigDb" << endl;
 }
 
 
