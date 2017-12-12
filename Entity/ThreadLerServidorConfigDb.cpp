@@ -57,7 +57,7 @@ bool ThreadLerServidorConfigDb::fromJson(const std::string &json, ServidorConfig
         //inicia a thread se for um novo registro
         if(novoRegistro){
             //Inicia a thread de monitoramento
-            mapMonitoramentoPostgres->at(idKey)->threadSincronizarConfigLocalComApi(srvConfig, mapMonitoramentoPostgres->at(idKey)->getServidorConfigDb(), mapMonitoramentoPostgres->at(idKey));
+            mapMonitoramentoPostgres->at(idKey)->threadMonitorarMonitoramentoPostgres(srvConfig, mapMonitoramentoPostgres->at(idKey)->getServidorConfigDb(), mapMonitoramentoPostgres->at(idKey));
         }
     }
 

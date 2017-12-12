@@ -26,9 +26,9 @@ public:
 
     void lerMonitorarPostgres(MonitoramentoPostgres *monitoramentoPostgres);
 
-    static void sincronizarConfigLocalComApi(ServidorConfig *srvConfig, ServidorConfigDb *SrvConfigDb, MonitoramentoPostgres *monitoramentoPostgres);
+    static void monitorarMonitoramentoPostgres(ServidorConfig *srvConfig, ServidorConfigDb *SrvConfigDb, MonitoramentoPostgres *monitoramentoPostgres);
 
-    void threadSincronizarConfigLocalComApi(ServidorConfig *srvConfig, ServidorConfigDb *SrvConfigDb, MonitoramentoPostgres *monitoramentoPostgres);
+    void threadMonitorarMonitoramentoPostgres(ServidorConfig *srvConfig, ServidorConfigDb *SrvConfigDb, MonitoramentoPostgres *monitoramentoPostgres);
 
     string toJson();
 

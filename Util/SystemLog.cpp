@@ -9,10 +9,10 @@
 #include "SystemData.h"
 
 bool SystemLog::ativarEmTelaInfo;
-bool SystemLog::ativarEmTelaWarming;
+bool SystemLog::ativarEmTelaWarning;
 bool SystemLog::ativarEmTelaErro;
 bool SystemLog::ativarEmArquivoInfo;
-bool SystemLog::ativarEmArquivoWarming;
+bool SystemLog::ativarEmArquivoWarning;
 bool SystemLog::ativarEmArquivoErro;
 
 
@@ -24,11 +24,11 @@ void SystemLog::lerLogConf(){
         configFile.load();
 
         SystemLog::ativarEmTelaInfo = configFile.getBool("ativarEmTelaInfo");
-        SystemLog::ativarEmTelaWarming = configFile.getBool("ativarEmTelaWarming");
+        SystemLog::ativarEmTelaWarning = configFile.getBool("ativarEmTelaWarning");
         SystemLog::ativarEmTelaErro = configFile.getBool("ativarEmTelaErro");
 
         SystemLog::ativarEmArquivoInfo = configFile.getBool("ativarEmArquivoInfo");
-        SystemLog::ativarEmArquivoWarming = configFile.getBool("ativarEmArquivoWarming");
+        SystemLog::ativarEmArquivoWarning = configFile.getBool("ativarEmArquivoWarning");
         SystemLog::ativarEmArquivoErro = configFile.getBool("ativarEmArquivoErro");
 
 
@@ -43,8 +43,8 @@ void SystemLog::execLog(char tipo, const string &log){
     //log em tela;
     if(tipo == 'l' and SystemLog::ativarEmTelaInfo){
         cout << "["+ SystemData::dataHora() +"][ Info        ]" << log << endl;
-    }else if (tipo == 'w' and SystemLog::ativarEmTelaWarming ){
-        clog << "["+ SystemData::dataHora() +"][ Warming    ]" << log << endl;
+    }else if (tipo == 'w' and SystemLog::ativarEmTelaWarning ){
+        clog << "["+ SystemData::dataHora() +"][ Warning    ]" << log << endl;
     } else if(tipo == 'e' and SystemLog::ativarEmTelaErro){
         cerr << "["+ SystemData::dataHora() +"][ Erro       ]" << log << endl;
     }
@@ -58,8 +58,8 @@ void SystemLog::execLog(char tipo, const string &log){
 
         std::system(y);
         delete[] y;
-    }else if (tipo == 'w' and SystemLog::ativarEmArquivoWarming){
-        std::string executarConsole = "echo [" + SystemData::dataHora() + "][ Warming    ] "+ log +" >> log.log";
+    }else if (tipo == 'w' and SystemLog::ativarEmArquivoWarning){
+        std::string executarConsole = "echo [" + SystemData::dataHora() + "][ Warning    ] "+ log +" >> log.log";
         char *y = new char[executarConsole.length() + 1];
         std::strcpy(y, executarConsole.c_str());
 

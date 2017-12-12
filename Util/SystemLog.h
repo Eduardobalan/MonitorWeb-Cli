@@ -13,10 +13,10 @@ using namespace std;
 class SystemLog {
 private:
     static bool ativarEmTelaInfo;
-    static bool ativarEmTelaWarming;
+    static bool ativarEmTelaWarning;
     static bool ativarEmTelaErro;
     static bool ativarEmArquivoInfo;
-    static bool ativarEmArquivoWarming;
+    static bool ativarEmArquivoWarning;
     static bool ativarEmArquivoErro;
 public:
 
@@ -42,12 +42,12 @@ public:
         SystemLog::ativarEmArquivoInfo = ativarEmArquivoInfo;
     }
 
-    static bool isAtivarEmTelaWarming() {
-        return ativarEmTelaWarming;
+    static bool isAtivarEmTelaWarning() {
+        return ativarEmTelaWarning;
     }
 
-    static void setAtivarEmTelaWarming(bool ativarEmTelaWarming) {
-        SystemLog::ativarEmTelaWarming = ativarEmTelaWarming;
+    static void setAtivarEmTelaWarning(bool ativarEmTelaWarning) {
+        SystemLog::ativarEmTelaWarning = ativarEmTelaWarning;
     }
 
     static bool isAtivarEmTelaErro() {
@@ -58,12 +58,12 @@ public:
         SystemLog::ativarEmTelaErro = ativarEmTelaErro;
     }
 
-    static bool isAtivarEmArquivoWarming() {
-        return ativarEmArquivoWarming;
+    static bool isAtivarEmArquivoWarning() {
+        return ativarEmArquivoWarning;
     }
 
-    static void setAtivarEmArquivoWarming(bool ativarEmArquivoWarming) {
-        SystemLog::ativarEmArquivoWarming = ativarEmArquivoWarming;
+    static void setAtivarEmArquivoWarning(bool ativarEmArquivoWarning) {
+        SystemLog::ativarEmArquivoWarning= ativarEmArquivoWarning;
     }
 
     static bool isAtivarEmArquivoErro() {
