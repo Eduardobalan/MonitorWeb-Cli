@@ -18,10 +18,6 @@ public:
 
     virtual ~ThreadLerServidorConfigInformacoesDb();
 
-    void lerConfiguracoesLocais();
-
-    void salvarConfiguracoesLocais();
-
     static bool fromJson(const string &json, ServidorConfig *srvConfig, std::map<long, MonitoramentoPostgresInformacoes*>  *mapMonitoramentoPostgresInformacoes);
 
     static void sincronizarConfigLocalComApi(ServidorConfig *srvConfig, std::map<long, MonitoramentoPostgresInformacoes*>  *mapMonitoramentoPostgresInformacoes);

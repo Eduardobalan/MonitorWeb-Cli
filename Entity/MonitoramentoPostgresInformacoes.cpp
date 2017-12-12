@@ -52,7 +52,7 @@ void MonitoramentoPostgresInformacoes::lerMonitoramentoPostgresInformacoes(Servi
     }
 };
 
-void MonitoramentoPostgresInformacoes::sincronizarConfigLocalComApi(ServidorConfig *srvConfig, ServidorConfigInformacoesDb *servidorConfigInformacoesDb, MonitoramentoPostgresInformacoes *monitoramentoPostgresInformacoes){
+void MonitoramentoPostgresInformacoes::monitorarMonitoramentoPostgresInformacoes(ServidorConfig *srvConfig, ServidorConfigInformacoesDb *servidorConfigInformacoesDb, MonitoramentoPostgresInformacoes *monitoramentoPostgresInformacoes){
 
     Result *result = nullptr;
     do{
@@ -75,9 +75,9 @@ void MonitoramentoPostgresInformacoes::sincronizarConfigLocalComApi(ServidorConf
     while(srvConfig->isFicarMonitorando());
 };
 
-void MonitoramentoPostgresInformacoes::threadSincronizarConfigLocalComApi(ServidorConfig *srvConfig, ServidorConfigInformacoesDb *servidorConfigInformacoesDb, MonitoramentoPostgresInformacoes *monitoramentoPostgresInformacoes){
+void MonitoramentoPostgresInformacoes::threadMonitorarMonitoramentoPostgresInformacoes(ServidorConfig *srvConfig, ServidorConfigInformacoesDb *servidorConfigInformacoesDb, MonitoramentoPostgresInformacoes *monitoramentoPostgresInformacoes){
     SystemLog::execLog('l',"MonitoramentoPostgresInformacoes: Iniciando uma Thread de Sincronizar local com API");
-    threadx = new std::thread(sincronizarConfigLocalComApi, srvConfig, servidorConfigInformacoesDb, monitoramentoPostgresInformacoes);
+    threadx = new std::thread(monitorarMonitoramentoPostgresInformacoes, srvConfig, servidorConfigInformacoesDb, monitoramentoPostgresInformacoes);
 
     //Salva o id da thread no MonitoramentoPostgresInformacoes.
     auto myid = threadx->get_id();

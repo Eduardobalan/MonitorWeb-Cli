@@ -38,9 +38,9 @@ public:
 
     void lerMonitoramentoPostgresInformacoes(ServidorConfigInformacoesDb *srvConfig);
 
-    void threadSincronizarConfigLocalComApi(ServidorConfig *srvConfig, ServidorConfigInformacoesDb *servidorConfigInformacoesDb, MonitoramentoPostgresInformacoes *monitoramentoPostgresInformacoes);
+    void threadMonitorarMonitoramentoPostgresInformacoes(ServidorConfig *srvConfig, ServidorConfigInformacoesDb *servidorConfigInformacoesDb, MonitoramentoPostgresInformacoes *monitoramentoPostgresInformacoes);
 
-    static void sincronizarConfigLocalComApi(ServidorConfig *srvConfig, ServidorConfigInformacoesDb *servidorConfigInformacoesDb, MonitoramentoPostgresInformacoes *monitoramentoPostgresInformacoes);
+    static void monitorarMonitoramentoPostgresInformacoes(ServidorConfig *srvConfig, ServidorConfigInformacoesDb *servidorConfigInformacoesDb, MonitoramentoPostgresInformacoes *monitoramentoPostgresInformacoes);
 
     bool fromJson(const string &json);
 

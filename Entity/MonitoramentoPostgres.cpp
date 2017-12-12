@@ -67,7 +67,7 @@ void MonitoramentoPostgres::lerMonitorarPostgres(MonitoramentoPostgres *monitora
 
 };
 
-void MonitoramentoPostgres::sincronizarConfigLocalComApi(ServidorConfig *srvConfig, ServidorConfigDb *SrvConfigDb, MonitoramentoPostgres *monitoramentoPostgres){
+void MonitoramentoPostgres::monitorarMonitoramentoPostgres(ServidorConfig *srvConfig, ServidorConfigDb *SrvConfigDb, MonitoramentoPostgres *monitoramentoPostgres){
 
     Result *result;
     //monitoramentoPostgres->setInformacoesMemoria(informacoesMemoria);
@@ -103,10 +103,11 @@ string MonitoramentoPostgres::toJson(){
     string json = buf.str();
     return  json;
 };
-
-void MonitoramentoPostgres::threadSincronizarConfigLocalComApi(ServidorConfig *srvConfig, ServidorConfigDb *SrvConfigDb, MonitoramentoPostgres *monitoramentoPostgres){
+//monitorarMonitoramentoPostgres
+//threadMonitorarMonitoramentoPostgres
+void MonitoramentoPostgres::threadMonitorarMonitoramentoPostgres(ServidorConfig *srvConfig, ServidorConfigDb *SrvConfigDb, MonitoramentoPostgres *monitoramentoPostgres){
     SystemLog::execLog('l',"MonitoramentoPostgres: Iniciando uma Thread de Sincronizar local com API");
-    threadx = new std::thread(sincronizarConfigLocalComApi, srvConfig, SrvConfigDb, monitoramentoPostgres);
+    threadx = new std::thread(monitorarMonitoramentoPostgres, srvConfig, SrvConfigDb, monitoramentoPostgres);
 
     //Salva o id da thread no monitoramentoPostgres.
     auto myid = threadx->get_id();
