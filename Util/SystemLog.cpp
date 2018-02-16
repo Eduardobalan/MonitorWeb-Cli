@@ -3,7 +3,7 @@
 //
 
 #include <cstring>
-#include <zconf.h>
+#include <unistd.h>
 #include "SystemLog.h"
 #include "ConfigFile/ConfigFile.h"
 #include "SystemData.h"
